@@ -25,14 +25,19 @@ public class TongueMechanicsScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 touchPos = getTouchPos();
+        var rayCast = getTouchHit();
+        if (rayCast.collider != null)
+        {
+            var hitPoints = rayCast.point;
+            _frogHingeJoint2D.connectedAnchor = hitPoints;
+            _frogHingeJoint2D.enabled = true;
+        }
         
 
     }
 
-    private Vector3 getTouchPos()
+    private RaycastHit2D getTouchHit()
     {
-        Vector3 vector3 = new Vector3();
         if (Input.touchCount > 0)
         {
             var touch = Input.GetTouch(0);
@@ -43,11 +48,10 @@ public class TongueMechanicsScript : MonoBehaviour
                 Ray ray = Camera.main.ScreenPointToRay(touchPosition);
                 RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
 
-                if (hit.collider != null)
-                {
-                    return hit.transform.position;
-                }
+                return hit;
             }
         }
+
+        return new RaycastHit2D();
     }
 }
