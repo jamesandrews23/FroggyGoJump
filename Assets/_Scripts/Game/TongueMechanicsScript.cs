@@ -4,43 +4,32 @@ namespace _Scripts.Game
 {
     public class TongueMechanicsScript : MonoBehaviour
     {
-        public GameObject frog;
-
         public GameObject tongue;
         // Start is called before the first frame update
-        private HingeJoint2D _frogHingeJoint2D;
+        private DistanceJoint2D _distanceJoint2D;
 
-        private Vector2 connectedTonguePoint;
+        private Vector2 _connectedTonguePoint;
 
-        private bool tongueShouldBeAnchored;
+        public float tongueAnchorPointOffset = 1;
+
         void Start()
         {
-            _frogHingeJoint2D = tongue.GetComponent<HingeJoint2D>();
-            //move the anchorpoint to match the frog's position on screen
-            // Vector2 frogPos = frog.transform.position;
-            // Vector2 tonguePos = _frogHingeJoint2D.anchor;
-            // tonguePos.x = frogPos.x;
-            // tonguePos.y = frogPos.y;
-            // Vector2 connector = _frogHingeJoint2D.connectedAnchor;
-            // connector.x = frogPos.x;
-            // connector.y = frogPos.y;
+            _distanceJoint2D = tongue.GetComponent<DistanceJoint2D>();
         }
 
         // Update is called once per frame
         void Update()
         {
-            var rayCast = getTouchHit();
+            var rayCast = GetTouchHit();
             if (rayCast.collider != null)
             {
-                connectedTonguePoint = rayCast.point;
-                _frogHingeJoint2D.enabled = true;
-                tongueShouldBeAnchored = true;
-                tongue.transform.position = connectedTonguePoint;
-                _frogHingeJoint2D.anchor = Vector2.zero;
+                _connectedTonguePoint = rayCast.point;
+                _distanceJoint2D.enabled = true;
+                _distanceJoint2D.anchor = _connectedTonguePoint + new Vector2(0, tongueAnchorPointOffset);
             }
         }
 
-        private RaycastHit2D getTouchHit()
+        private RaycastHit2D GetTouchHit()
         {
             if (Input.touchCount > 0)
             {
