@@ -11,7 +11,7 @@ namespace _Scripts.Game
         void Start()
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
-            _rigidbody2D.freezeRotation = true;
+            _rigidbody2D.freezeRotation = true; //adding this to prevent the frog's body from rotating while tongue is attached
         }
 
         // Update is called once per frame
