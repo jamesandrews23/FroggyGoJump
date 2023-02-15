@@ -6,7 +6,7 @@ namespace _Scripts.Game
     {
         public GameObject tongue;
         // Start is called before the first frame update
-        private DistanceJoint2D _distanceJoint2D;
+        private SpringJoint2D _distanceJoint2D;
 
         private Vector2 _connectedTonguePoint;
 
@@ -14,7 +14,7 @@ namespace _Scripts.Game
 
         void Start()
         {
-            _distanceJoint2D = tongue.GetComponent<DistanceJoint2D>();
+            _distanceJoint2D = tongue.GetComponent<SpringJoint2D>();
         }
 
         // Update is called once per frame

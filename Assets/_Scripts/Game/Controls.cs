@@ -11,6 +11,7 @@ namespace _Scripts.Game
         void Start()
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
+            _rigidbody2D.freezeRotation = true;
         }
 
         // Update is called once per frame
