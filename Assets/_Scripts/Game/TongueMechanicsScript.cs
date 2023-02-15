@@ -21,7 +21,7 @@ namespace _Scripts.Game
         void Update()
         {
             var rayCast = GetTouchHit();
-            if (rayCast.collider != null)
+            if (rayCast.collider != null && rayCast.collider.gameObject.CompareTag("Hook"))
             {
                 _connectedTonguePoint = rayCast.point;
                 _distanceJoint2D.enabled = true;
