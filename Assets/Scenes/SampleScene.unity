@@ -270,6 +270,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpForce: 3
+  frogTongue: {fileID: 552371921}
 --- !u!1 &354859199
 GameObject:
   m_ObjectHideFlags: 0
