@@ -11,6 +11,7 @@ namespace _Scripts.Game
         private Touch _touch;
         public GameObject frogTongue;
         private bool _isDragging;
+        public float jumpHeight = 5f;
 
         // Start is called before the first frame update
         void Start()
@@ -72,12 +73,12 @@ namespace _Scripts.Game
         {
             if (touchPosition.x > transform.position.x)
             {
-                _rigidbody2D.AddForce(new Vector2(jumpForce, jumpForce), ForceMode2D.Impulse);
+                _rigidbody2D.AddForce(new Vector2(jumpForce, jumpHeight), ForceMode2D.Impulse);
                 _isJumping = true;
             }
             else if (touchPosition.x < transform.position.x)
             {
-                _rigidbody2D.AddForce(new Vector2(-jumpForce, jumpForce), ForceMode2D.Impulse);
+                _rigidbody2D.AddForce(new Vector2(-jumpForce, jumpHeight), ForceMode2D.Impulse);
                 _isJumping = true;
             }
         }
