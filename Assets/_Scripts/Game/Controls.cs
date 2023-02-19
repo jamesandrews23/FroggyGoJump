@@ -12,6 +12,7 @@ namespace _Scripts.Game
         public GameObject frogTongue;
         private bool _isDragging;
         public float jumpHeight = 5f;
+        public int platforms;
 
         // Start is called before the first frame update
         void Start()
@@ -19,6 +20,14 @@ namespace _Scripts.Game
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _rigidbody2D.freezeRotation = true; //adding this to prevent the frog's body from rotating while tongue is attached
             _isDragging = false;
+        }
+
+        private void OnCollisionEnter2D(Collision2D col)
+        {
+            if (col.gameObject.CompareTag("Platform"))
+            {
+                platforms++;
+            }
         }
 
         // Update is called once per frame

@@ -1,0 +1,32 @@
+using System.Collections;
+using System.Collections.Generic;
+using _Scripts.Game;
+using UnityEngine;
+
+public class GameController : MonoBehaviour
+{
+    public GameOverScreen gameOverScreen;
+    // Start is called before the first frame update
+    public GameObject player;
+
+    public Controls controls;
+
+    private void GameOver()
+    {
+        gameOverScreen.Setup(controls.platforms);
+    }
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        float cameraBottomY = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, Camera.main.nearClipPlane)).y;
+        if (player.transform.position.y < cameraBottomY)
+        {
+            GameOver();
+        }
+    }
+}
