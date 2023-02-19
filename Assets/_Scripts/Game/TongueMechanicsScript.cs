@@ -12,6 +12,8 @@ namespace _Scripts.Game
 
         public float tongueAnchorPointOffset = 1;
 
+        public float bottomOfScreenThreshold = 2;
+
         void Start()
         {
             _distanceJoint2D = tongue.GetComponent<SpringJoint2D>();
@@ -23,9 +25,19 @@ namespace _Scripts.Game
             var rayCast = GetTouchHit();
             if (rayCast.collider != null && rayCast.collider.gameObject.CompareTag("Hook"))
             {
-                _connectedTonguePoint = rayCast.point;
-                _distanceJoint2D.enabled = true;
-                _distanceJoint2D.anchor = _connectedTonguePoint + new Vector2(0, tongueAnchorPointOffset);
+                Camera mainCamera = Camera.main;
+                float cameraBottomY = mainCamera.ViewportToWorldPoint(new Vector3(0, 0, mainCamera.nearClipPlane)).y;
+                var hookPos = rayCast.collider.gameObject.transform.position.y;
+                Vector2 posA = new Vector2(0, cameraBottomY);
+                Vector2 posB = new Vector2(0, hookPos);
+                float distance = Vector2.Distance(posA, posB);
+
+                if (distance >= bottomOfScreenThreshold)
+                {
+                    _connectedTonguePoint = rayCast.point;
+                    _distanceJoint2D.enabled = true;
+                    _distanceJoint2D.anchor = _connectedTonguePoint + new Vector2(0, tongueAnchorPointOffset);
+                }
             }
         }
 
