@@ -8,6 +8,7 @@ public class CameraFollow : MonoBehaviour
     public Transform target;
     public float smoothTime = 0.3f;
     private Vector3 _velocity = Vector3.zero;
+    private Vector3 _lastPos = new(0, 0, 0);
 
     void Update() {
         // Set the target position to follow the frog on the y-axis
@@ -23,7 +24,12 @@ public class CameraFollow : MonoBehaviour
         targetPosition.z = position.z;
 
         // Move the camera to the target position
+        
         position = targetPosition;
-        transform2.position = position;
+        if (position.y >= _lastPos.y)
+        {
+            _lastPos = position;
+            transform2.position = position;
+        }
     }
 }
