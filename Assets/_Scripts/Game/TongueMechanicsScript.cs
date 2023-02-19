@@ -14,6 +14,8 @@ namespace _Scripts.Game
 
         public float bottomOfScreenThreshold = 2;
 
+        public float distanceToHookThreshold = 5;
+
         void Start()
         {
             _distanceJoint2D = tongue.GetComponent<SpringJoint2D>();
@@ -25,20 +27,31 @@ namespace _Scripts.Game
             var rayCast = GetTouchHit();
             if (rayCast.collider != null && rayCast.collider.gameObject.CompareTag("Hook"))
             {
-                Camera mainCamera = Camera.main;
-                float cameraBottomY = mainCamera.ViewportToWorldPoint(new Vector3(0, 0, mainCamera.nearClipPlane)).y;
-                var hookPos = rayCast.collider.gameObject.transform.position.y;
-                Vector2 posA = new Vector2(0, cameraBottomY);
-                Vector2 posB = new Vector2(0, hookPos);
-                float distance = Vector2.Distance(posA, posB);
-
-                if (distance >= bottomOfScreenThreshold)
+                if (IsHookInRange(rayCast))
                 {
                     _connectedTonguePoint = rayCast.point;
                     _distanceJoint2D.enabled = true;
                     _distanceJoint2D.anchor = _connectedTonguePoint + new Vector2(0, tongueAnchorPointOffset);
                 }
             }
+        }
+
+        private bool IsHookInRange(RaycastHit2D hit)
+        {
+            
+            Camera mainCamera = Camera.main;
+            float cameraBottomY = mainCamera.ViewportToWorldPoint(new Vector3(0, 0, mainCamera.nearClipPlane)).y;
+            var hookPos = hit.collider.gameObject.transform.position.y;
+            Vector2 posA = new Vector2(0, cameraBottomY);
+            Vector2 posB = new Vector2(0, hookPos);
+            float distanceBetweenHookAndScreen = Vector2.Distance(posA, posB);
+
+            Rigidbody2D frog = tongue.GetComponent<SpringJoint2D>().connectedBody;
+            Vector3 frogPos = frog.transform.position;
+
+            float distanceBetweenHookAndFrog = Vector2.Distance(frogPos, posB);
+            
+            return distanceBetweenHookAndScreen >= bottomOfScreenThreshold && distanceBetweenHookAndFrog <= distanceToHookThreshold;
         }
 
         private RaycastHit2D GetTouchHit()

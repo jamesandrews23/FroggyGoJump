@@ -442,6 +442,7 @@ MonoBehaviour:
   tongue: {fileID: 552371921}
   tongueAnchorPointOffset: 1
   bottomOfScreenThreshold: 2
+  distanceToHookThreshold: 4
 --- !u!4 &483734570
 Transform:
   m_ObjectHideFlags: 0
