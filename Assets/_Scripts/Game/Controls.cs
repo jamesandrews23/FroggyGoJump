@@ -21,17 +21,11 @@ namespace _Scripts.Game
             _isDragging = false;
         }
 
-        private void OnCollisionEnter2D(Collision2D col)
-        {
-            if (col.gameObject.CompareTag("Platform"))
-            {
-                _isJumping = false;
-            }
-        }
-
         // Update is called once per frame
         void Update()
         {
+            _isJumping = _rigidbody2D.velocity.y != 0;
+            
             if (Input.touchCount > 0)
             {
                 _touch = Input.GetTouch(0);
@@ -74,12 +68,10 @@ namespace _Scripts.Game
             if (touchPosition.x > transform.position.x)
             {
                 _rigidbody2D.AddForce(new Vector2(jumpForce, jumpHeight), ForceMode2D.Impulse);
-                _isJumping = true;
             }
             else if (touchPosition.x < transform.position.x)
             {
                 _rigidbody2D.AddForce(new Vector2(-jumpForce, jumpHeight), ForceMode2D.Impulse);
-                _isJumping = true;
             }
         }
 
