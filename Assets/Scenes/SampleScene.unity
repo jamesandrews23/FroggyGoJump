@@ -148,11 +148,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9187200752929997089, guid: 8a71154581126cf48a5af2c15a0247ad, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.16
+      value: 1.68
       objectReference: {fileID: 0}
     - target: {fileID: 9187200752929997089, guid: 8a71154581126cf48a5af2c15a0247ad, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.86
+      value: 4.26
       objectReference: {fileID: 0}
     - target: {fileID: 9187200752929997089, guid: 8a71154581126cf48a5af2c15a0247ad, type: 3}
       propertyPath: m_LocalPosition.z
@@ -340,6 +340,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jumpForce: 3
   frogTongue: {fileID: 552371921}
+  jumpHeight: 5
 --- !u!1 &483734568
 GameObject:
   m_ObjectHideFlags: 0
@@ -490,7 +491,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 501270646}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.52, y: -1.68, z: 0}
+  m_LocalPosition: {x: -0.35, y: 0.87, z: 0}
   m_LocalScale: {x: 1.7, y: 0.31, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -872,7 +873,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1076831993}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.47, y: -1.68, z: 0}
+  m_LocalPosition: {x: 2.47, y: -0.55, z: 0}
   m_LocalScale: {x: 1.7, y: 0.31, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
