@@ -9,11 +9,9 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     public GameObject player;
 
-    public Controls controls;
-
     private void GameOver()
     {
-        gameOverScreen.Setup(controls.platforms);
+        gameOverScreen.Setup(player.GetComponent<Controls>().platforms);
     }
     void Start()
     {
