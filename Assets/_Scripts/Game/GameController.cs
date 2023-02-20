@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using _Scripts.Game;
+using _Scripts.Game.InputControl;
+using _Scripts.Game.SceneManagement;
 using UnityEngine;
 
 public class GameController : MonoBehaviour

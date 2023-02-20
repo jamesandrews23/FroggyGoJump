@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace _Scripts.Game
+namespace _Scripts.Game.Frog
 {
     public class TongueMechanicsScript : MonoBehaviour
     {
@@ -16,9 +16,12 @@ namespace _Scripts.Game
 
         public float distanceToHookThreshold = 5;
 
+        public Camera mainCamera;
+
         void Start()
         {
             _distanceJoint2D = tongue.GetComponent<SpringJoint2D>();
+            mainCamera = Camera.main;
         }
 
         // Update is called once per frame
@@ -38,8 +41,6 @@ namespace _Scripts.Game
 
         private bool IsHookInRange(RaycastHit2D hit)
         {
-            
-            Camera mainCamera = Camera.main;
             float cameraBottomY = mainCamera.ViewportToWorldPoint(new Vector3(0, 0, mainCamera.nearClipPlane)).y;
             var hookPos = hit.collider.gameObject.transform.position.y;
             Vector2 posA = new Vector2(0, cameraBottomY);
@@ -63,7 +64,7 @@ namespace _Scripts.Game
                 if (touch.phase == TouchPhase.Began)
                 {
                     Vector2 touchPosition = touch.position;
-                    Ray ray = Camera.main.ScreenPointToRay(touchPosition);
+                    Ray ray = mainCamera.ScreenPointToRay(touchPosition);
                     RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
 
                     return hit;

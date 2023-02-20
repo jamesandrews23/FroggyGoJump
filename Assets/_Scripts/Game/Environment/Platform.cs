@@ -1,30 +1,30 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Platform : MonoBehaviour
+namespace _Scripts.Game.Environment
 {
-    private void OnTriggerEnter2D(Collider2D col)
+    public class Platform : MonoBehaviour
     {
-        if (col.gameObject.CompareTag("Frog"))
+        private void OnTriggerEnter2D(Collider2D col)
         {
-            Rigidbody2D frog = col.GetComponent<Rigidbody2D>();
-
-            if (frog.velocity.y > 0)
+            if (col.gameObject.CompareTag("Frog"))
             {
-                var box2d = gameObject.GetComponent<BoxCollider2D>();
-                box2d.enabled = false;
+                Rigidbody2D frog = col.GetComponent<Rigidbody2D>();
+
+                if (frog.velocity.y > 0)
+                {
+                    var box2d = gameObject.GetComponent<BoxCollider2D>();
+                    box2d.enabled = false;
+                }
             }
         }
-    }
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("Frog"))
+        private void OnTriggerExit2D(Collider2D other)
         {
-            var box2d = gameObject.GetComponent<BoxCollider2D>();
-            box2d.enabled = true;
+            if (other.gameObject.CompareTag("Frog"))
+            {
+                var box2d = gameObject.GetComponent<BoxCollider2D>();
+                box2d.enabled = true;
+            }
         }
     }
 }

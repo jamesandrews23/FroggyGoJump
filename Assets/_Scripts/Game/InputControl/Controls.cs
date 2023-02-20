@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-namespace _Scripts.Game
+namespace _Scripts.Game.InputControl
 {
     public class Controls : MonoBehaviour
     {
