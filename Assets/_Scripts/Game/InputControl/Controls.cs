@@ -15,6 +15,7 @@ namespace _Scripts.Game.InputControl
         public float jumpHeight = 5f;
         public int platforms;
         public InputController inputController;
+        private bool isFlying;
 
         public bool IsDragging => _isDragging;
 
@@ -39,7 +40,15 @@ namespace _Scripts.Game.InputControl
         // Update is called once per frame
         void Update()
         {
-            _isJumping = _rigidbody2D.velocity.y != 0;
+            _isJumping = !isFlying && _rigidbody2D.velocity.y != 0;
+
+            if (isFlying)
+            {
+                if (_rigidbody2D.velocity.y <= 0)
+                {
+                    EndFly();
+                }
+            }
             
             if (Input.touchCount > 0)
             {
@@ -73,8 +82,21 @@ namespace _Scripts.Game.InputControl
                 {
                     _isDragging = false;
                     _tongueSpringJoint2D.enabled = false;
+                    BeginFly();
                 }
             }
+        }
+
+        private void BeginFly()
+        {
+            isFlying = true;
+            gameObject.layer = 9; //set to FrogInFlight layer
+        }
+
+        private void EndFly()
+        {
+            isFlying = false;
+            gameObject.layer = 7; //set to regular Frog layer
         }
 
         private void Jump(Vector3 touchPosition)
