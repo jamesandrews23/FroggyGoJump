@@ -49,6 +49,16 @@ namespace _Scripts.Game.Frog
             }
         }
 
+        public Vector3 GetAttachedTonguePoint()
+        {
+            return _connectedTonguePoint;
+        }
+
+        public bool AttachedToHook()
+        {
+            return connectedHook != null && _distanceJoint2D.enabled;
+        }
+
         public bool CompareConnectedHook(Hook toCompare)
         {
             return toCompare == connectedHook;

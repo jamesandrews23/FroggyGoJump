@@ -1,4 +1,5 @@
 using _Scripts.Game.Environment;
+using _Scripts.Game.Frog;
 using UnityEngine;
 
 namespace _Scripts.Game.InputControl
@@ -16,12 +17,16 @@ namespace _Scripts.Game.InputControl
         public int platforms;
         public InputController inputController;
         private bool isFlying;
+        public Vector3 facingRightRotation = new Vector3(0,0,0);
+        public Vector3 facingLeftRotation = new Vector3(0,180,0);
+        private TongueMechanicsScript _tongueMechanicsScript;
 
         public bool IsDragging => _isDragging;
 
         // Start is called before the first frame update
         void Start()
         {
+            _tongueMechanicsScript = GetComponent<TongueMechanicsScript>();
             _tongueSpringJoint2D = frogTongue.GetComponent<SpringJoint2D>();
             _tongueSpringJoint2D.enabled = false;
             _rigidbody2D = GetComponent<Rigidbody2D>();
@@ -40,6 +45,8 @@ namespace _Scripts.Game.InputControl
         // Update is called once per frame
         void Update()
         {
+            CheckFacingDirection();
+            
             _isJumping = !isFlying && _rigidbody2D.velocity.y != 0;
 
             if (isFlying)
@@ -83,6 +90,34 @@ namespace _Scripts.Game.InputControl
                     _isDragging = false;
                     _tongueSpringJoint2D.enabled = false;
                     BeginFly();
+                }
+            }
+        }
+
+        private void CheckFacingDirection()
+        {
+            if (!_tongueMechanicsScript.AttachedToHook())
+            {
+                var xVel = _rigidbody2D.velocity.x;
+                if (xVel > 0)
+                {
+                    transform.rotation = Quaternion.Euler(facingRightRotation);
+                }
+                else if (xVel < 0)
+                {
+                    transform.rotation = Quaternion.Euler(facingLeftRotation);
+                }
+            }
+            else
+            {
+                var attachedTonguePoint = _tongueMechanicsScript.GetAttachedTonguePoint();
+                if (transform.position.x > attachedTonguePoint.x)
+                {
+                    transform.rotation = Quaternion.Euler(facingLeftRotation);
+                }
+                else
+                {
+                    transform.rotation = Quaternion.Euler(facingRightRotation);
                 }
             }
         }
