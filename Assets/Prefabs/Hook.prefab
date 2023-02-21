@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 9187200752929997090}
   - component: {fileID: 9187200752929997088}
   - component: {fileID: 2897647194417062435}
+  - component: {fileID: -4012239875357646426}
   m_Layer: 6
   m_Name: Hook
   m_TagString: Hook
@@ -133,3 +134,15 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &-4012239875357646426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9187200752929997091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8d98050a4a5400a9dcc8e23a750f19b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

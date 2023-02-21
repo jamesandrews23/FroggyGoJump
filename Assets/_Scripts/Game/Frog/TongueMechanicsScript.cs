@@ -1,3 +1,4 @@
+using _Scripts.Game.Environment;
 using UnityEngine;
 
 namespace _Scripts.Game.Frog
@@ -17,6 +18,8 @@ namespace _Scripts.Game.Frog
         public float distanceToHookThreshold = 5;
 
         public Camera mainCamera;
+        
+        private Hook connectedHook;
 
         void Start()
         {
@@ -30,13 +33,25 @@ namespace _Scripts.Game.Frog
             var rayCast = GetTouchHit();
             if (rayCast.collider != null && rayCast.collider.gameObject.CompareTag("Hook"))
             {
-                if (IsHookInRange(rayCast))
+                var hitHook = rayCast.collider.GetComponent<Hook>();
+                if (connectedHook != null && connectedHook == hitHook) //if touched hook is connected to tongue already, detach tongue from touched hook
                 {
+                    _distanceJoint2D.enabled = false;
+                    connectedHook = null;
+                }
+                else if (IsHookInRange(rayCast)) //otherwise, check if touched hook is in range. If so, attach tongue to hook
+                {
+                    connectedHook = hitHook;
                     _connectedTonguePoint = rayCast.point;
                     _distanceJoint2D.enabled = true;
                     _distanceJoint2D.anchor = _connectedTonguePoint + new Vector2(0, tongueAnchorPointOffset);
                 }
             }
+        }
+
+        public bool CompareConnectedHook(Hook toCompare)
+        {
+            return toCompare == connectedHook;
         }
 
         private bool IsHookInRange(RaycastHit2D hit)

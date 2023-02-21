@@ -1,3 +1,4 @@
+using _Scripts.Game.Environment;
 using UnityEngine;
 
 namespace _Scripts.Game.InputControl
@@ -9,13 +10,19 @@ namespace _Scripts.Game.InputControl
         private bool _isJumping;
         private Touch _touch;
         public GameObject frogTongue;
+        private SpringJoint2D _tongueSpringJoint2D;
         private bool _isDragging;
         public float jumpHeight = 5f;
         public int platforms;
+        public InputController inputController;
+
+        public bool IsDragging => _isDragging;
 
         // Start is called before the first frame update
         void Start()
         {
+            _tongueSpringJoint2D = frogTongue.GetComponent<SpringJoint2D>();
+            _tongueSpringJoint2D.enabled = false;
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _rigidbody2D.freezeRotation = true; //adding this to prevent the frog's body from rotating while tongue is attached
             _isDragging = false;
@@ -41,9 +48,8 @@ namespace _Scripts.Game.InputControl
                 Vector3 touchPosition = Camera.main.ScreenToWorldPoint(_touch.position);
                 touchPosition.z = 0;
 
-                RaycastHit2D ray = GetTouchHit();
-                SpringJoint2D tongue = frogTongue.GetComponent<SpringJoint2D>();
-                bool isTargetFrogAndAttached = ray.collider && ray.collider.gameObject == gameObject && tongue.enabled;
+                RaycastHit2D ray = inputController.GetTouchHit();
+                bool isTargetFrogAndAttached = ray.collider && ray.collider.gameObject == gameObject && _tongueSpringJoint2D.enabled;
                 
                 Debug.Log("Dragging: " + _isDragging);
                 Debug.Log("Frog Target: " + isTargetFrogAndAttached);
@@ -66,7 +72,7 @@ namespace _Scripts.Game.InputControl
                 if (_touch.phase == TouchPhase.Ended && isTargetFrogAndAttached)
                 {
                     _isDragging = false;
-                    tongue.enabled = false;
+                    _tongueSpringJoint2D.enabled = false;
                 }
             }
         }
@@ -90,23 +96,6 @@ namespace _Scripts.Game.InputControl
             transform.position = draggingPos;
         }
         
-        private RaycastHit2D GetTouchHit()
-        {
-            if (Input.touchCount > 0)
-            {
-                var touch = Input.GetTouch(0);
-
-                if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary || touch.phase == TouchPhase.Ended)
-                {
-                    Vector2 touchPosition = touch.position;
-                    Ray ray = Camera.main.ScreenPointToRay(touchPosition);
-                    RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
-
-                    return hit;
-                }
-            }
-
-            return new RaycastHit2D();
-        }
+        
     }
 }

@@ -11,20 +11,22 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     public GameObject player;
 
+    private Controls frogControls;
+
     private void GameOver()
     {
         gameOverScreen.Setup(player.GetComponent<Controls>().platforms);
     }
     void Start()
     {
-        
+        frogControls = player.GetComponent<Controls>();
     }
 
     // Update is called once per frame
     void Update()
     {
         float cameraBottomY = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, Camera.main.nearClipPlane)).y;
-        if (player.transform.position.y < cameraBottomY)
+        if (!frogControls.IsDragging && player.transform.position.y < cameraBottomY)
         {
             GameOver();
         }
