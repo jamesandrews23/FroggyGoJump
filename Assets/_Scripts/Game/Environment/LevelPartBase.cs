@@ -5,7 +5,7 @@ namespace _Scripts.Game.Environment
 {
     public class LevelPartBase : MonoBehaviour
     {
-        private const float DeadZone = -10f;
+        private const float DeadZone = -50f;
         private Transform _player;
         private void Start()
         {
