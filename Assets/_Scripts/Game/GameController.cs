@@ -28,6 +28,7 @@ public class GameController : MonoBehaviour
         float cameraBottomY = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, Camera.main.nearClipPlane)).y;
         if (!frogControls.IsDragging && player.transform.position.y < cameraBottomY)
         {
+            player.SetActive(false);
             GameOver();
         }
     }
