@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
 
 namespace _Scripts.Game.Environment
 {
-    public class Platform : MonoBehaviour
+    public class Platform : LevelPartBase
     {
+        
+
         private void OnTriggerEnter2D(Collider2D col)
         {
             if (col.gameObject.CompareTag("Frog"))
