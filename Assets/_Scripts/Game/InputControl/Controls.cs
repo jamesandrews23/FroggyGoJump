@@ -14,12 +14,12 @@ namespace _Scripts.Game.InputControl
         private SpringJoint2D _tongueSpringJoint2D;
         private bool _isDragging;
         public float jumpHeight = 5f;
-        public int platforms;
         public InputController inputController;
         private bool isFlying;
         public Vector3 facingRightRotation = new Vector3(0,0,0);
         public Vector3 facingLeftRotation = new Vector3(0,180,0);
         private TongueMechanicsScript _tongueMechanicsScript;
+        public float maxHeightReached = 0f;
 
         public bool IsDragging => _isDragging;
 
@@ -34,26 +34,30 @@ namespace _Scripts.Game.InputControl
             _isDragging = false;
         }
 
-        private void OnCollisionEnter2D(Collision2D col)
-        {
-            if (col.gameObject.CompareTag("Platform"))
-            {
-                platforms++;
-            }
-        }
-
         // Update is called once per frame
         void Update()
         {
             CheckFacingDirection();
+
+            float playerVelocityY = _rigidbody2D.velocity.y;
             
-            _isJumping = !isFlying && _rigidbody2D.velocity.y != 0;
+            _isJumping = !isFlying && playerVelocityY != 0;
 
             if (isFlying)
             {
-                if (_rigidbody2D.velocity.y <= 0)
+                if (playerVelocityY <= 0)
                 {
                     EndFly();
+                }
+            }
+
+            float playerPosY = _rigidbody2D.gameObject.transform.position.y;
+            if (playerPosY > 0)
+            {
+                if (playerPosY > maxHeightReached)
+                {
+                    maxHeightReached = playerPosY;
+                    Debug.Log("Height Reached: " + maxHeightReached);
                 }
             }
             

@@ -11,7 +11,7 @@ namespace _Scripts.Game.SceneManagement
         public void Setup(int score)
         {
             gameObject.SetActive(true);
-            pointsText.text = score.ToString() + " POINTS";
+            pointsText.text = "Total Height " + score;
         }
 
         public void RestartButton()

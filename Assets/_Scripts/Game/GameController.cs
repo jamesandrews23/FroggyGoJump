@@ -15,7 +15,7 @@ public class GameController : MonoBehaviour
 
     private void GameOver()
     {
-        gameOverScreen.Setup(player.GetComponent<Controls>().platforms);
+        gameOverScreen.Setup((int) player.GetComponent<Controls>().maxHeightReached);
     }
     void Start()
     {
