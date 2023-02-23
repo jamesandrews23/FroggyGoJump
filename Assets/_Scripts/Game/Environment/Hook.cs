@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace _Scripts.Game.Environment
 {
-    public class Hook : MonoBehaviour
+    public class Hook : LevelPartBase
     {
         //possibly use this in the future?
     }
