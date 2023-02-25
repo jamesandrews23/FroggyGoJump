@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,13 +10,10 @@ public class LevelSpawner : MonoBehaviour
     public List<Transform> levelParts;
     public GameObject player;
     private Vector3 _lastLevelPartPos;
-    private const float PlayerDistSpawnLevelPart = 200f;
+    private const float PlayerDistSpawnLevelPart = 15f;
     private float _leftBorder;
     private float _rightBorder;
-    public float maxHeight = 3f;
-    public float minHeight = 1f;
-    public float maxWidth = 3f;
-    public float minWidth = 1f;
+    public float offsetY = 100f;
     private void Awake()
     {
         _leftBorder = FindLeftScreenBorder();
@@ -45,9 +43,10 @@ public class LevelSpawner : MonoBehaviour
         //if x was closer to the left, then move to the right, and vice-a-versa
         Transform chosenPart = levelParts[Random.Range(0, levelParts.Count)];
         float nextPos = Random.Range(_leftBorder, _rightBorder);
-        newPos.x = nextPos - chosenPart.GetComponent<BoxCollider2D>().bounds.size.x;
-        Transform spawnedPart = SpawnLevelPart(newPos, chosenPart);
-        _lastLevelPartPos = spawnedPart.Find("EndPos").position;
+        newPos.x = nextPos - chosenPart.GetComponent<Renderer>().bounds.size.x / 2.0f;
+        newPos.y = _lastLevelPartPos.y + offsetY;
+        // newPos.x = Vector3.Slerp(new Vector3(_leftBorder, 0, 0), new Vector3(_rightBorder, 0, 0), Random.Range(0f, 1f)).x;
+        _lastLevelPartPos = SpawnLevelPart(newPos, chosenPart).position;
     }
 
     private Transform SpawnLevelPart(Vector3 position, Transform levelPart)
