@@ -154,9 +154,11 @@ namespace _Scripts.Game.InputControl
         {
             Vector3 draggingPos = Camera.main.ScreenToWorldPoint(_touch.position);
             draggingPos.z = 0f;
-            transform.position = draggingPos;
+            float hookPosY = _tongueSpringJoint2D.anchor.y - _tongueMechanicsScript.tongueAnchorPointOffset;
+            if (draggingPos.y <= hookPosY)
+            {
+                transform.position = draggingPos;
+            }
         }
-        
-        
     }
 }
