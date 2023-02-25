@@ -74,7 +74,7 @@ namespace _Scripts.Game.InputControl
                 Debug.Log("Dragging: " + _isDragging);
                 Debug.Log("Frog Target: " + isTargetFrogAndAttached);
 
-                if (_touch.phase == TouchPhase.Began && !_isJumping)
+                if (_touch.phase == TouchPhase.Began && !_isJumping && !isFlying)
                 {
                     Jump(touchPosition);
                 }
