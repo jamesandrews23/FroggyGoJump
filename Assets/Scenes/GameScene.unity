@@ -381,7 +381,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jumpForce: 3
   frogTongue: {fileID: 552371921}
-  jumpHeight: 8
+  jumpHeight: 7
   inputController: {fileID: 1571559415}
   facingRightRotation: {x: 0, y: 0, z: 0}
   facingLeftRotation: {x: 0, y: 180, z: 0}
@@ -791,7 +791,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelParts:
+  - {fileID: 2547023394370787227, guid: 7576f3b8f762d5f41892afe67bb20e84, type: 3}
   - {fileID: 2547023394370787227, guid: 7e77f4ff3bd3ead4ab13376ac7acdc5f, type: 3}
+  - {fileID: 2547023394370787227, guid: af29006a88955b84eae6c70c865d1e10, type: 3}
   - {fileID: 9187200752929997089, guid: 8a71154581126cf48a5af2c15a0247ad, type: 3}
   player: {fileID: 198039055}
   offsetY: 1.5
