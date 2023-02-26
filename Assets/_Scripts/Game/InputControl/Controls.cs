@@ -20,6 +20,7 @@ namespace _Scripts.Game.InputControl
         public Vector3 facingLeftRotation = new Vector3(0,180,0);
         private TongueMechanicsScript _tongueMechanicsScript;
         public float maxHeightReached = 0f;
+        public float jumpUpForce = 10f;
 
         public bool IsDragging => _isDragging;
 
@@ -140,13 +141,22 @@ namespace _Scripts.Game.InputControl
 
         private void Jump(Vector3 touchPosition)
         {
-            if (touchPosition.x > transform.position.x)
+            float angle = Vector3.Angle(touchPosition - gameObject.transform.position, Vector3.up);
+
+            if (angle < 25)
             {
-                _rigidbody2D.AddForce(new Vector2(jumpForce, jumpHeight), ForceMode2D.Impulse);
+                _rigidbody2D.AddForce(Vector2.up * jumpUpForce, ForceMode2D.Impulse);
             }
-            else if (touchPosition.x < transform.position.x)
+            else
             {
-                _rigidbody2D.AddForce(new Vector2(-jumpForce, jumpHeight), ForceMode2D.Impulse);
+                if (touchPosition.x > transform.position.x)
+                {
+                    _rigidbody2D.AddForce(new Vector2(jumpForce, jumpHeight), ForceMode2D.Impulse);
+                }
+                else if (touchPosition.x < transform.position.x)
+                {
+                    _rigidbody2D.AddForce(new Vector2(-jumpForce, jumpHeight), ForceMode2D.Impulse);
+                }
             }
         }
 
