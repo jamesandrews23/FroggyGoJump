@@ -21,6 +21,8 @@ namespace _Scripts.Game.InputControl
         private TongueMechanicsScript _tongueMechanicsScript;
         public float maxHeightReached = 0f;
         public float jumpUpForce = 10f;
+        public float jumpForce45 = 1f;
+        public float jumpHeight45 = 7f;
 
         public bool IsDragging => _isDragging;
 
@@ -146,6 +148,16 @@ namespace _Scripts.Game.InputControl
             if (angle < 25)
             {
                 _rigidbody2D.AddForce(Vector2.up * jumpUpForce, ForceMode2D.Impulse);
+            } else if (angle < 45)
+            {
+                if (touchPosition.x > transform.position.x)
+                {
+                    _rigidbody2D.AddForce(new Vector2(jumpForce45, jumpHeight45), ForceMode2D.Impulse);
+                }
+                else if (touchPosition.x < transform.position.x)
+                {
+                    _rigidbody2D.AddForce(new Vector2(-jumpForce45, jumpHeight45), ForceMode2D.Impulse);
+                }
             }
             else
             {
