@@ -19,7 +19,7 @@ TagManager:
   - Frog
   - Platforms
   - FrogInFlight
-  - 
+  - WhileConnected
   - 
   - 
   - 
@@ -44,4 +44,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: level
+    uniqueID: 1948853529
+    locked: 0
+  - name: player
+    uniqueID: 1810021897
     locked: 0

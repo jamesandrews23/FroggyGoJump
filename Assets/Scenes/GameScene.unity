@@ -267,11 +267,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 198039057}
+  - component: {fileID: 198039062}
   - component: {fileID: 198039056}
   - component: {fileID: 198039058}
   - component: {fileID: 198039060}
   - component: {fileID: 198039061}
-  - component: {fileID: 198039062}
   m_Layer: 7
   m_Name: Frog
   m_TagString: Frog
@@ -317,8 +317,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1810021897
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: de98ddbfda35f274aa72010612f70724, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -339,7 +339,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 198039055}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.66, y: -3.96, z: 0}
+  m_LocalPosition: {x: 0.02, y: -3.96, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -382,13 +382,14 @@ MonoBehaviour:
   jumpForce: 3
   frogTongue: {fileID: 552371921}
   jumpHeight: 7
-  inputController: {fileID: 1571559415}
   facingRightRotation: {x: 0, y: 0, z: 0}
   facingLeftRotation: {x: 0, y: 180, z: 0}
   maxHeightReached: 0
   jumpUpForce: 7
   jumpForce45: 1
   jumpHeight45: 7
+  launchForce: 1
+  tongueLaunchForce: 12
 --- !u!114 &198039061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -587,7 +588,7 @@ GameObject:
   m_Component:
   - component: {fileID: 552371924}
   - component: {fileID: 552371923}
-  - component: {fileID: 552371926}
+  - component: {fileID: 552371929}
   - component: {fileID: 552371928}
   - component: {fileID: 552371927}
   m_Layer: 0
@@ -633,26 +634,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!231 &552371926
-SpringJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 552371921}
-  m_Enabled: 0
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 198039058}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: -0.03, y: 0}
-  m_ConnectedAnchor: {x: 0.03, y: 0.4}
-  m_AutoConfigureDistance: 0
-  m_Distance: 1.2
-  m_DampingRatio: 0.3
-  m_Frequency: 1
 --- !u!114 &552371927
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -764,6 +745,26 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!231 &552371929
+SpringJoint2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 552371921}
+  m_Enabled: 0
+  serializedVersion: 4
+  m_EnableCollision: 0
+  m_ConnectedRigidBody: {fileID: 198039058}
+  m_BreakForce: 200
+  m_BreakTorque: Infinity
+  m_AutoConfigureConnectedAnchor: 0
+  m_Anchor: {x: -0.03, y: 0}
+  m_ConnectedAnchor: {x: 0.03, y: 0.4}
+  m_AutoConfigureDistance: 0
+  m_Distance: 1
+  m_DampingRatio: 0.3
+  m_Frequency: 1
 --- !u!1 &665880668
 GameObject:
   m_ObjectHideFlags: 0
