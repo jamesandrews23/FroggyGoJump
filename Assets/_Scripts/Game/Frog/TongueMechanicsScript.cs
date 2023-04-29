@@ -7,7 +7,7 @@ namespace _Scripts.Game.Frog
     {
         public GameObject tongue;
         // Start is called before the first frame update
-        private SpringJoint2D _distanceJoint2D;
+        private SpringJoint2D _tongueJoint;
 
         private Vector2 _connectedTonguePoint;
 
@@ -23,7 +23,7 @@ namespace _Scripts.Game.Frog
 
         void Start()
         {
-            _distanceJoint2D = tongue.GetComponent<SpringJoint2D>();
+            _tongueJoint = tongue.GetComponent<SpringJoint2D>();
             mainCamera = Camera.main;
         }
 
@@ -36,15 +36,15 @@ namespace _Scripts.Game.Frog
                 var hitHook = rayCast.collider.GetComponent<Hook>();
                 if (connectedHook != null && connectedHook == hitHook) //if touched hook is connected to tongue already, detach tongue from touched hook
                 {
-                    _distanceJoint2D.enabled = false;
+                    _tongueJoint.enabled = false;
                     connectedHook = null;
                 }
                 else if (IsHookInRange(rayCast)) //otherwise, check if touched hook is in range. If so, attach tongue to hook
                 {
                     connectedHook = hitHook;
                     _connectedTonguePoint = rayCast.point;
-                    _distanceJoint2D.enabled = true;
-                    _distanceJoint2D.anchor = _connectedTonguePoint + new Vector2(0, tongueAnchorPointOffset);
+                    _tongueJoint.enabled = true;
+                    _tongueJoint.anchor = _connectedTonguePoint + new Vector2(0, tongueAnchorPointOffset);
                 }
             }
         }
@@ -56,7 +56,7 @@ namespace _Scripts.Game.Frog
 
         public bool AttachedToHook()
         {
-            return connectedHook != null && _distanceJoint2D.enabled;
+            return connectedHook != null && _tongueJoint.enabled;
         }
 
         public bool CompareConnectedHook(Hook toCompare)

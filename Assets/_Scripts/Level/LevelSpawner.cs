@@ -12,12 +12,17 @@ namespace _Scripts.Level
         private const float PlayerDistSpawnLevelPart = 15f;
         private float _leftBorder;
         private float _rightBorder;
+        private Transform _lastWallPosRight;
+        private Transform _lastWallPosLeft;
+        public Transform wallElement;
         private void Awake()
         {
             _leftBorder = FindLeftScreenBorder();
             _rightBorder = FindRightScreenBorder();
         
             _lastLevelPartPos = SpawnLevelPart(player.transform.position + new Vector3(0, -.5f, 0), levelParts[0]);
+            _lastWallPosLeft = SpawnLevelPart(new Vector3(-2, 5, 0), wallElement);
+            _lastWallPosRight = SpawnLevelPart(new Vector3(2, 5, 0), wallElement);
 
             SpawnLevelPart();
         }
@@ -28,7 +33,16 @@ namespace _Scripts.Level
             if (Vector3.Distance(player.transform.position, _lastLevelPartPos.position) < PlayerDistSpawnLevelPart)
             {
                 SpawnLevelPart();
+                SpawnWallPart();
             }
+        }
+
+        private void SpawnWallPart()
+        {
+            Vector3 newPosRight = _lastWallPosRight.Find("NewPos").position;
+            Vector3 newPosLeft = _lastWallPosLeft.Find("NewPos").position;
+            _lastWallPosRight = SpawnLevelPart(newPosRight, wallElement);
+            _lastWallPosLeft = SpawnLevelPart(newPosLeft, wallElement);
         }
 
         private void SpawnLevelPart()

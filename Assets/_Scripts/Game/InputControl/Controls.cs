@@ -28,6 +28,8 @@ namespace _Scripts.Game.InputControl
 
         public float tongueLaunchForce = 10f;
 
+        public float tongueLaunchUpwardForce = 10f;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -42,7 +44,7 @@ namespace _Scripts.Game.InputControl
         // Update is called once per frame
         void Update()
         {
-            CheckFacingDirection();
+            // CheckFacingDirection();
 
             //determines if player is in the air i.e. not on a platform, falling or flying
             _isInAir = _rigidbody2D.velocity.y != 0;
@@ -73,9 +75,6 @@ namespace _Scripts.Game.InputControl
             bool isPlayerTouched = hit.collider && hit.collider.gameObject == gameObject;
             bool isPlayerConnected = _tongueSpringJoint2D.enabled;
             
-            Debug.Log("Player Touched: " + isPlayerTouched);
-            Debug.Log("Player Connected: " + isPlayerConnected);
-
             if(isPlayerConnected)
             {
                 gameObject.layer = LayerMask.NameToLayer("WhileConnected");
@@ -92,12 +91,25 @@ namespace _Scripts.Game.InputControl
 
             if ((_touch.phase == TouchPhase.Moved || _touch.phase == TouchPhase.Stationary) && isPlayerTouched && isPlayerConnected)
             {
+                _isDragging = true;
                 Dragging();
             }
 
             if (_touch.phase == TouchPhase.Ended && isPlayerConnected && isPlayerTouched)
             {
+                _isDragging = false;
                 DragRelease();
+            }
+
+            if(isPlayerConnected && !isPlayerTouched){
+                EnableAllColliders();
+            }
+
+            if(_isDragging && isPlayerConnected){
+                float tongueLength = Vector2.Distance(gameObject.transform.position, _tongueSpringJoint2D.anchor);
+                if(tongueLength >= 4.5){
+                    LaunchFrog();
+                }
             }
         }
 
@@ -166,29 +178,55 @@ namespace _Scripts.Game.InputControl
 
         private void Dragging()
         {
-            Debug.Log("***DRAGGING***");
-            // Rigidbody2D rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
-            // rigidbody2D.isKinematic = true;
+            DisableAllColliders();
             _isDragging = true;
             Vector3 draggingPos = Camera.main.ScreenToWorldPoint(_touch.position);
             draggingPos.z = 0f;
             transform.position = draggingPos;
+
+            
         }
 
         private void DragRelease()
         {
-            Debug.Log("***DRAG END***");
-            // rigidbody2D.isKinematic = false;
             _isDragging = false;
             LaunchFrog();
         }
 
         private void LaunchFrog()
         {
-            Debug.Log("Luanch Frog");
+            _isDragging = false;
+            EnableAllColliders();
+
             Vector2 direction = (_tongueSpringJoint2D.transform.position - transform.position).normalized;
             _rigidbody2D.AddForce(direction * tongueLaunchForce, ForceMode2D.Impulse);
+            
+            // Add an additional upward force to the frog
+            Vector2 upwardForce = Vector2.up * tongueLaunchUpwardForce;
+            _rigidbody2D.AddForce(upwardForce, ForceMode2D.Impulse);
+
             _tongueSpringJoint2D.enabled = false;
+            gameObject.layer = LayerMask.NameToLayer("Frog");
+            _tongueSpringJoint2D.gameObject.layer = LayerMask.NameToLayer("Default");   
+        }
+
+        private void DisableAllColliders(){
+            Collider2D[] allColliders = FindObjectsOfType<Collider2D>();
+
+            foreach (Collider2D collider in allColliders)
+            {
+                if(collider.gameObject != gameObject && (collider.gameObject.layer == LayerMask.NameToLayer("Hooks") || collider.gameObject.layer == LayerMask.NameToLayer("Platforms")))
+                    collider.enabled = false;
+            }
+        }
+
+        private void EnableAllColliders(){
+            Collider2D[] allColliders = FindObjectsOfType<Collider2D>();
+
+            foreach (Collider2D collider in allColliders)
+            {
+                collider.enabled = true;
+            }
         }
     }
 }
