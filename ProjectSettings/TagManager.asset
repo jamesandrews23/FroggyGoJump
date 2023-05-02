@@ -48,6 +48,9 @@ TagManager:
   - name: level
     uniqueID: 1948853529
     locked: 0
+  - name: tongue
+    uniqueID: 3823269515
+    locked: 0
   - name: player
     uniqueID: 1810021897
     locked: 0

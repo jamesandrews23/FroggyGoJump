@@ -22,13 +22,15 @@ namespace _Scripts.Game.InputControl
         public float jumpForce45 = 1f;
         public float jumpHeight45 = 7f;
 
-        public float launchForce = 1f;
+        public float launchForce = 10f;
 
         public bool IsDragging => _isDragging;
 
-        public float tongueLaunchForce = 10f;
+        private float _deltaX, _deltaY;
 
-        public float tongueLaunchUpwardForce = 10f;
+        private bool _moveAllowed = false;
+
+        private float _tongueLength = 0;
 
         // Start is called before the first frame update
         void Start()
@@ -59,60 +61,56 @@ namespace _Scripts.Game.InputControl
                 }
             }
             
-            //handles touch event
+            //Screen is touched
             if (Input.touchCount > 0)
             {
-                _touch = Input.GetTouch(0);
-                HandleTouchEvent();
-            }
-        }
+                Touch touch = Input.GetTouch(0);
 
-        private void HandleTouchEvent()
-        {
-            Ray ray = Camera.main.ScreenPointToRay(_touch.position);
-            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
-            
-            bool isPlayerTouched = hit.collider && hit.collider.gameObject == gameObject;
-            bool isPlayerConnected = _tongueSpringJoint2D.enabled;
-            
-            if(isPlayerConnected)
-            {
-                gameObject.layer = LayerMask.NameToLayer("WhileConnected");
-                _tongueSpringJoint2D.gameObject.layer = LayerMask.NameToLayer("WhileConnected");   
-            } else {
-                gameObject.layer = LayerMask.NameToLayer("Frog");
-                _tongueSpringJoint2D.gameObject.layer = LayerMask.NameToLayer("Default");   
-            }
-            
-            if (_touch.phase == TouchPhase.Began && !_isInAir)
-            {
-                Jump();
-            }
+                Vector3 touchPos = Camera.main.ScreenToWorldPoint(touch.position);
+                touchPos.z = 0;
 
-            if ((_touch.phase == TouchPhase.Moved || _touch.phase == TouchPhase.Stationary) && isPlayerTouched && isPlayerConnected)
-            {
-                _isDragging = true;
-                Dragging();
-            }
+                switch(touch.phase){
+                    case TouchPhase.Began:
+                        if(_tongueSpringJoint2D.enabled){
+                            if(GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos)){
+                                _deltaX = touchPos.x - transform.position.x;
+                                _deltaY = touchPos.y - transform.position.y;
 
-            if (_touch.phase == TouchPhase.Ended && isPlayerConnected && isPlayerTouched)
-            {
-                _isDragging = false;
-                DragRelease();
-            }
+                                _moveAllowed = true;
 
-            if(isPlayerConnected && !isPlayerTouched){
-                EnableAllColliders();
-            }
-
-            if(_isDragging && isPlayerConnected){
-                float tongueLength = Vector2.Distance(gameObject.transform.position, _tongueSpringJoint2D.anchor);
-                if(tongueLength >= 4.5){
-                    LaunchFrog();
+                                // _rigidbody2D.freezeRotation = true;
+                                _rigidbody2D.velocity = new Vector2(0, 0);
+                                _rigidbody2D.gravityScale = 0;
+                                _tongueSpringJoint2D.autoConfigureDistance = true;
+                                DisableAllColliders();
+                            }
+                        } else {
+                            if(!_isInAir)
+                                Jump(touchPos);
+                        }
+                    break;
+                    case TouchPhase.Moved:
+                    case TouchPhase.Stationary:
+                        if(GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos) && _moveAllowed){
+                            _isDragging = true;
+                            transform.position = touchPos;
+                        }
+                    break;
+                    case TouchPhase.Ended:
+                        _isDragging = false;
+                        _moveAllowed = false;
+                        _rigidbody2D.gravityScale = 2;
+                        _tongueSpringJoint2D.autoConfigureDistance = false;
+                        _tongueSpringJoint2D.distance = .5f;
+                        if(_tongueSpringJoint2D.enabled && GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos)){
+                            Debug.Log("Launch Frog");
+                            _tongueLength = Vector2.Distance(gameObject.transform.position, _tongueSpringJoint2D.anchor);
+                            LaunchFrog();
+                        }
+                    break;
                 }
             }
         }
-
 
         private void CheckFacingDirection()
         {
@@ -142,9 +140,8 @@ namespace _Scripts.Game.InputControl
             }
         }
 
-        private void Jump()
+        private void Jump(Vector3 touchPosition)
         {
-            Vector3 touchPosition = Camera.main.ScreenToWorldPoint(_touch.position);
             touchPosition.z = 0;
             
             float angle = Vector3.Angle(touchPosition - gameObject.transform.position, Vector3.up);
@@ -176,34 +173,21 @@ namespace _Scripts.Game.InputControl
             }
         }
 
-        private void Dragging()
-        {
-            DisableAllColliders();
-            _isDragging = true;
-            Vector3 draggingPos = Camera.main.ScreenToWorldPoint(_touch.position);
-            draggingPos.z = 0f;
-            transform.position = draggingPos;
-
-            
-        }
-
-        private void DragRelease()
-        {
-            _isDragging = false;
-            LaunchFrog();
-        }
-
         private void LaunchFrog()
         {
             _isDragging = false;
             EnableAllColliders();
 
             Vector2 direction = (_tongueSpringJoint2D.transform.position - transform.position).normalized;
-            _rigidbody2D.AddForce(direction * tongueLaunchForce, ForceMode2D.Impulse);
+            direction = new Vector2(direction.x, Mathf.Abs(direction.y));
+            float launchPower = launchForce + _tongueLength;
+            _rigidbody2D.AddForce(direction * launchPower, ForceMode2D.Impulse);
+            Debug.Log("Direction: " + direction * launchPower);
             
             // Add an additional upward force to the frog
-            Vector2 upwardForce = Vector2.up * tongueLaunchUpwardForce;
-            _rigidbody2D.AddForce(upwardForce, ForceMode2D.Impulse);
+            // Vector2 upwardForce = Vector2.up * launchForce;
+            // _rigidbody2D.AddForce(upwardForce, ForceMode2D.Impulse);
+            // Debug.Log("Upward Force: " + upwardForce);
 
             _tongueSpringJoint2D.enabled = false;
             gameObject.layer = LayerMask.NameToLayer("Frog");
