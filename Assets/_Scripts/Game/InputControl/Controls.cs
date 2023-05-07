@@ -32,6 +32,9 @@ namespace _Scripts.Game.InputControl
 
         private float _tongueLength = 0;
 
+        private Vector2 _initialTouchPos;
+        private Vector2 _currentTouchPos; 
+
         // Start is called before the first frame update
         void Start()
         {
@@ -71,8 +74,11 @@ namespace _Scripts.Game.InputControl
 
                 switch(touch.phase){
                     case TouchPhase.Began:
+                        
                         if(_tongueSpringJoint2D.enabled){
                             if(GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos)){
+                                _initialTouchPos = touchPos;
+                                Debug.Log("Initial Touch Pos: " + _initialTouchPos);
                                 _deltaX = touchPos.x - transform.position.x;
                                 _deltaY = touchPos.y - transform.position.y;
 
@@ -104,6 +110,8 @@ namespace _Scripts.Game.InputControl
                         _tongueSpringJoint2D.distance = .5f;
                         if(_tongueSpringJoint2D.enabled && GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos)){
                             Debug.Log("Launch Frog");
+                            _currentTouchPos = touchPos;
+                            Debug.Log("Current Touch Pos: " + _currentTouchPos);    
                             _tongueLength = Vector2.Distance(gameObject.transform.position, _tongueSpringJoint2D.anchor);
                             LaunchFrog();
                         }
@@ -176,22 +184,16 @@ namespace _Scripts.Game.InputControl
         private void LaunchFrog()
         {
             _isDragging = false;
-            EnableAllColliders();
-
-            Vector2 direction = (_tongueSpringJoint2D.transform.position - transform.position).normalized;
+            Vector2 direction = (_initialTouchPos - _currentTouchPos).normalized;
             direction = new Vector2(direction.x, Mathf.Abs(direction.y));
             float launchPower = launchForce + _tongueLength;
             _rigidbody2D.AddForce(direction * launchPower, ForceMode2D.Impulse);
             Debug.Log("Direction: " + direction * launchPower);
-            
-            // Add an additional upward force to the frog
-            // Vector2 upwardForce = Vector2.up * launchForce;
-            // _rigidbody2D.AddForce(upwardForce, ForceMode2D.Impulse);
-            // Debug.Log("Upward Force: " + upwardForce);
 
             _tongueSpringJoint2D.enabled = false;
             gameObject.layer = LayerMask.NameToLayer("Frog");
             _tongueSpringJoint2D.gameObject.layer = LayerMask.NameToLayer("Default");   
+            EnableAllColliders();
         }
 
         private void DisableAllColliders(){
