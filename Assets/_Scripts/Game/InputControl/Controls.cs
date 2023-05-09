@@ -72,9 +72,16 @@ namespace _Scripts.Game.InputControl
                 Vector3 touchPos = Camera.main.ScreenToWorldPoint(touch.position);
                 touchPos.z = 0;
 
+                if(_tongueSpringJoint2D.enabled){
+                    gameObject.layer = LayerMask.NameToLayer("WhileConnected");
+                    _tongueSpringJoint2D.gameObject.layer = LayerMask.NameToLayer("WhileConnected");   
+                } else {
+                    gameObject.layer = LayerMask.NameToLayer("Frog");
+                    _tongueSpringJoint2D.gameObject.layer = LayerMask.NameToLayer("Default");   
+                }
+
                 switch(touch.phase){
                     case TouchPhase.Began:
-                        
                         if(_tongueSpringJoint2D.enabled){
                             if(GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos)){
                                 _initialTouchPos = touchPos;
