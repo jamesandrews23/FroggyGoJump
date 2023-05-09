@@ -21,9 +21,6 @@ namespace _Scripts.Game.InputControl
         public float jumpUpForce = 10f;
         public float jumpForce45 = 1f;
         public float jumpHeight45 = 7f;
-
-        public float launchForce = 10f;
-
         public bool IsDragging => _isDragging;
 
         private float _deltaX, _deltaY;
@@ -34,6 +31,8 @@ namespace _Scripts.Game.InputControl
 
         private Vector2 _initialTouchPos;
         private Vector2 _currentTouchPos; 
+        public float maxLaunchForce = 100f;
+        public float defaultLaunchSpeed = 5f;
 
         // Start is called before the first frame update
         void Start()
@@ -116,9 +115,7 @@ namespace _Scripts.Game.InputControl
                         _tongueSpringJoint2D.autoConfigureDistance = false;
                         _tongueSpringJoint2D.distance = .5f;
                         if(_tongueSpringJoint2D.enabled && GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos)){
-                            Debug.Log("Launch Frog");
                             _currentTouchPos = touchPos;
-                            Debug.Log("Current Touch Pos: " + _currentTouchPos);    
                             _tongueLength = Vector2.Distance(gameObject.transform.position, _tongueSpringJoint2D.anchor);
                             LaunchFrog();
                         }
@@ -193,9 +190,11 @@ namespace _Scripts.Game.InputControl
             _isDragging = false;
             Vector2 direction = (_initialTouchPos - _currentTouchPos).normalized;
             direction = new Vector2(direction.x, Mathf.Abs(direction.y));
-            float launchPower = launchForce + _tongueLength;
-            _rigidbody2D.AddForce(direction * launchPower, ForceMode2D.Impulse);
-            Debug.Log("Direction: " + direction * launchPower);
+
+            Debug.Log("Tongue Length: " + _tongueLength);
+            float launchForce = Mathf.Clamp(_tongueLength * defaultLaunchSpeed, 0, maxLaunchForce);
+            Debug.Log("Launch Force: " + launchForce);
+            _rigidbody2D.AddForce(direction * launchForce, ForceMode2D.Impulse);
 
             _tongueSpringJoint2D.enabled = false;
             gameObject.layer = LayerMask.NameToLayer("Frog");

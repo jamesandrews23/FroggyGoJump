@@ -388,7 +388,8 @@ MonoBehaviour:
   jumpUpForce: 10
   jumpForce45: 1
   jumpHeight45: 10
-  launchForce: 20
+  maxLaunchForce: 100
+  defaultLaunchSpeed: 5
 --- !u!114 &198039061
 MonoBehaviour:
   m_ObjectHideFlags: 0
