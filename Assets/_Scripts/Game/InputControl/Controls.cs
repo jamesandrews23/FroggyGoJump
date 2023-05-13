@@ -84,7 +84,6 @@ namespace _Scripts.Game.InputControl
                         if(_tongueSpringJoint2D.enabled){
                             if(GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos)){
                                 _initialTouchPos = touchPos;
-                                Debug.Log("Initial Touch Pos: " + _initialTouchPos);
                                 _deltaX = touchPos.x - transform.position.x;
                                 _deltaY = touchPos.y - transform.position.y;
 
@@ -191,9 +190,7 @@ namespace _Scripts.Game.InputControl
             Vector2 direction = (_initialTouchPos - _currentTouchPos).normalized;
             direction = new Vector2(direction.x, Mathf.Abs(direction.y));
 
-            Debug.Log("Tongue Length: " + _tongueLength);
             float launchForce = Mathf.Clamp(_tongueLength * defaultLaunchSpeed, 0, maxLaunchForce);
-            Debug.Log("Launch Force: " + launchForce);
             _rigidbody2D.AddForce(direction * launchForce, ForceMode2D.Impulse);
 
             _tongueSpringJoint2D.enabled = false;

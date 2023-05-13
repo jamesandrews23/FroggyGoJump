@@ -15,14 +15,18 @@ namespace _Scripts.Level
         private Transform _lastWallPosRight;
         private Transform _lastWallPosLeft;
         public Transform wallElement;
+        public Vector3 leftWallPos = new Vector3(-2, 5, 0);
+        public Vector3 rightWallPos = new Vector3(2, 5, 0);
+        public float withinWallCheck = 0.25f;
+        public float wallBuffer = 0.75f;
         private void Awake()
         {
             _leftBorder = FindLeftScreenBorder();
             _rightBorder = FindRightScreenBorder();
         
             _lastLevelPartPos = SpawnLevelPart(player.transform.position + new Vector3(0, -.5f, 0), levelParts[0]);
-            _lastWallPosLeft = SpawnLevelPart(new Vector3(-2, 5, 0), wallElement);
-            _lastWallPosRight = SpawnLevelPart(new Vector3(2, 5, 0), wallElement);
+            _lastWallPosLeft = SpawnLevelPart(leftWallPos, wallElement);
+            _lastWallPosRight = SpawnLevelPart(rightWallPos, wallElement);
 
             SpawnLevelPart();
         }
@@ -48,13 +52,20 @@ namespace _Scripts.Level
         private void SpawnLevelPart()
         {
             Vector3 newPos = _lastLevelPartPos.Find("EndPos").position;
+            newPos.z = 0;
             Transform chosenPart = levelParts[Random.Range(0, levelParts.Count)];
+            // Bounds bounds = chosenPart.GetComponent<Renderer>().bounds;
+            Debug.Log("New Position: " + newPos);
 
-            if (IsNewPosOutOfBounds(newPos.x)) //outside of the screen area
+            if (newPos.x >= rightWallPos.x - withinWallCheck) //outside of the screen area
             {
-                float randomPosBetweenBounds = Random.Range(_leftBorder, _rightBorder);
-                newPos.x = randomPosBetweenBounds;
+                newPos.x = rightWallPos.x - wallBuffer;
+                Debug.Log("Modified Position: " + newPos);
+            } else if(newPos.x <= leftWallPos.x + withinWallCheck){
+                newPos.x = leftWallPos.x + wallBuffer;
+                Debug.Log("Modified Position: " + newPos);
             }
+
             _lastLevelPartPos = SpawnLevelPart(newPos, chosenPart);
         }
 
@@ -81,7 +92,7 @@ namespace _Scripts.Level
 
         private bool IsNewPosOutOfBounds(float newPos)
         {
-            return newPos < _leftBorder || newPos > _rightBorder;
+            return newPos < leftWallPos.x || newPos > rightWallPos.x;
         }
     }
 }

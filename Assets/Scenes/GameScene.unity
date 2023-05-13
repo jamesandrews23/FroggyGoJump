@@ -801,6 +801,10 @@ MonoBehaviour:
   - {fileID: 9187200752929997089, guid: 8a71154581126cf48a5af2c15a0247ad, type: 3}
   player: {fileID: 198039055}
   wallElement: {fileID: 1776593991138919277, guid: f469ef4ef990b71489a17b1858ff63a2, type: 3}
+  leftWallPos: {x: -2.25, y: 5, z: 0}
+  rightWallPos: {x: 2.25, y: 5, z: 0}
+  withinWallCheck: 0.35
+  wallBuffer: 0.85
 --- !u!4 &665880670
 Transform:
   m_ObjectHideFlags: 0
