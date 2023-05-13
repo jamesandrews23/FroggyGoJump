@@ -10,23 +10,24 @@ namespace _Scripts.Level
         public GameObject player;
         private Transform _lastLevelPartPos;
         private const float PlayerDistSpawnLevelPart = 15f;
-        private float _leftBorder;
-        private float _rightBorder;
         private Transform _lastWallPosRight;
         private Transform _lastWallPosLeft;
         public Transform wallElement;
-        public Vector3 leftWallPos = new Vector3(-2, 5, 0);
-        public Vector3 rightWallPos = new Vector3(2, 5, 0);
-        public float withinWallCheck = 0.25f;
-        public float wallBuffer = 0.75f;
+        private Vector3 _leftWallPos;
+        private Vector3 _rightWallPos;
+        private float _nearWallCheck;
+        private float _wallBuffer;
         private void Awake()
         {
-            _leftBorder = FindLeftScreenBorder();
-            _rightBorder = FindRightScreenBorder();
+            _leftWallPos = new Vector3(FindLeftScreenBorder(), 5, 0);
+            _rightWallPos = new Vector3(FindRightScreenBorder(), 5, 0);
+
+            _nearWallCheck = _rightWallPos.x * 0.25f;
+            _wallBuffer = _rightWallPos.x * 0.75f;
         
             _lastLevelPartPos = SpawnLevelPart(player.transform.position + new Vector3(0, -.5f, 0), levelParts[0]);
-            _lastWallPosLeft = SpawnLevelPart(leftWallPos, wallElement);
-            _lastWallPosRight = SpawnLevelPart(rightWallPos, wallElement);
+            _lastWallPosLeft = SpawnLevelPart(_leftWallPos, wallElement);
+            _lastWallPosRight = SpawnLevelPart(_rightWallPos, wallElement);
 
             SpawnLevelPart();
         }
@@ -55,14 +56,17 @@ namespace _Scripts.Level
             newPos.z = 0;
             Transform chosenPart = levelParts[Random.Range(0, levelParts.Count)];
             // Bounds bounds = chosenPart.GetComponent<Renderer>().bounds;
+            Debug.Log("Screen Left Border: " + FindLeftScreenBorder());
+            Debug.Log("Screen Right Border: " + FindRightScreenBorder());
             Debug.Log("New Position: " + newPos);
 
-            if (newPos.x >= rightWallPos.x - withinWallCheck) //outside of the screen area
+
+            if (newPos.x >= _rightWallPos.x - _nearWallCheck) //outside of the screen area
             {
-                newPos.x = rightWallPos.x - wallBuffer;
+                newPos.x = _rightWallPos.x - _wallBuffer;
                 Debug.Log("Modified Position: " + newPos);
-            } else if(newPos.x <= leftWallPos.x + withinWallCheck){
-                newPos.x = leftWallPos.x + wallBuffer;
+            } else if(newPos.x <= _leftWallPos.x + _nearWallCheck){
+                newPos.x = _leftWallPos.x + _wallBuffer;
                 Debug.Log("Modified Position: " + newPos);
             }
 
@@ -92,7 +96,7 @@ namespace _Scripts.Level
 
         private bool IsNewPosOutOfBounds(float newPos)
         {
-            return newPos < leftWallPos.x || newPos > rightWallPos.x;
+            return newPos < _leftWallPos.x || newPos > _rightWallPos.x;
         }
     }
 }
