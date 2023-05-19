@@ -6,29 +6,22 @@ namespace _Scripts.Game.InputControl
 {
     public class Controls : MonoBehaviour
     {
-        public float jumpForce = 10f;
         private Rigidbody2D _rigidbody2D;
         private bool _isInAir;
         private Touch _touch;
         public GameObject frogTongue;
         private SpringJoint2D _tongueSpringJoint2D;
         private bool _isDragging;
-        public float jumpHeight = 5f;
         public Vector3 facingRightRotation = new Vector3(0,0,0);
         public Vector3 facingLeftRotation = new Vector3(0,180,0);
         private TongueMechanicsScript _tongueMechanicsScript;
         public float maxHeightReached = 0f;
         public float jumpUpForce = 10f;
-        public float jumpForce45 = 1f;
-        public float jumpHeight45 = 7f;
+        public float jumpForce = 1f;
         public bool IsDragging => _isDragging;
-
         private float _deltaX, _deltaY;
-
         private bool _moveAllowed = false;
-
         private float _tongueLength = 0;
-
         private Vector2 _initialTouchPos;
         private Vector2 _currentTouchPos; 
         public float maxLaunchForce = 100f;
@@ -160,26 +153,15 @@ namespace _Scripts.Game.InputControl
             if (angle < 25)
             {
                 _rigidbody2D.AddForce(Vector2.up * jumpUpForce, ForceMode2D.Impulse);
-            } else if (angle < 45)
+            } else 
             {
                 if (touchPosition.x > transform.position.x)
                 {
-                    _rigidbody2D.AddForce(new Vector2(jumpForce45, jumpHeight45), ForceMode2D.Impulse);
+                    _rigidbody2D.AddForce(new Vector2(jumpForce, jumpUpForce), ForceMode2D.Impulse);
                 }
                 else if (touchPosition.x < transform.position.x)
                 {
-                    _rigidbody2D.AddForce(new Vector2(-jumpForce45, jumpHeight45), ForceMode2D.Impulse);
-                }
-            }
-            else
-            {
-                if (touchPosition.x > transform.position.x)
-                {
-                    _rigidbody2D.AddForce(new Vector2(jumpForce, jumpHeight), ForceMode2D.Impulse);
-                }
-                else if (touchPosition.x < transform.position.x)
-                {
-                    _rigidbody2D.AddForce(new Vector2(-jumpForce, jumpHeight), ForceMode2D.Impulse);
+                    _rigidbody2D.AddForce(new Vector2(-jumpForce, jumpUpForce), ForceMode2D.Impulse);
                 }
             }
         }
