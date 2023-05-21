@@ -26,6 +26,7 @@ namespace _Scripts.Game.InputControl
         private Vector2 _currentTouchPos; 
         public float maxLaunchForce = 100f;
         public float defaultLaunchSpeed = 5f;
+        private bool _isPlayerTouched = false;
 
         // Start is called before the first frame update
         void Start()
@@ -45,7 +46,6 @@ namespace _Scripts.Game.InputControl
 
             //determines if player is in the air i.e. not on a platform, falling or flying
             _isInAir = _rigidbody2D.velocity.y != 0;
-
             //Stores maximum height reached for score
             float playerPosY = _rigidbody2D.gameObject.transform.position.y;
             if (playerPosY > 0)
@@ -54,6 +54,12 @@ namespace _Scripts.Game.InputControl
                 {
                     maxHeightReached = playerPosY;
                 }
+            }
+
+            bool isPlayerFalling = _rigidbody2D.velocity.y < 0;
+
+            if(isPlayerFalling && !_isPlayerTouched){
+                EnableAllColliders();
             }
             
             //Screen is touched
@@ -72,10 +78,12 @@ namespace _Scripts.Game.InputControl
                     _tongueSpringJoint2D.gameObject.layer = LayerMask.NameToLayer("Default");   
                 }
 
+                _isPlayerTouched = GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos);
+                
                 switch(touch.phase){
                     case TouchPhase.Began:
                         if(_tongueSpringJoint2D.enabled){
-                            if(GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos)){
+                            if(_isPlayerTouched){
                                 _initialTouchPos = touchPos;
                                 _deltaX = touchPos.x - transform.position.x;
                                 _deltaY = touchPos.y - transform.position.y;
@@ -95,8 +103,9 @@ namespace _Scripts.Game.InputControl
                     break;
                     case TouchPhase.Moved:
                     case TouchPhase.Stationary:
-                        if(GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos) && _moveAllowed){
+                        if(_isPlayerTouched && _moveAllowed){
                             _isDragging = true;
+                            Vector2 touchMovement = touch.deltaPosition * 1.5f;
                             transform.position = touchPos;
                         }
                     break;
@@ -106,10 +115,11 @@ namespace _Scripts.Game.InputControl
                         _rigidbody2D.gravityScale = 2;
                         _tongueSpringJoint2D.autoConfigureDistance = false;
                         _tongueSpringJoint2D.distance = .5f;
-                        if(_tongueSpringJoint2D.enabled && GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos)){
+                        if(_tongueSpringJoint2D.enabled && _isPlayerTouched){
                             _currentTouchPos = touchPos;
                             _tongueLength = Vector2.Distance(gameObject.transform.position, _tongueSpringJoint2D.anchor);
                             LaunchFrog();
+                            _isPlayerTouched = false;
                         }
                     break;
                 }
@@ -177,8 +187,7 @@ namespace _Scripts.Game.InputControl
 
             _tongueSpringJoint2D.enabled = false;
             gameObject.layer = LayerMask.NameToLayer("Frog");
-            _tongueSpringJoint2D.gameObject.layer = LayerMask.NameToLayer("Default");   
-            EnableAllColliders();
+            _tongueSpringJoint2D.gameObject.layer = LayerMask.NameToLayer("Default");
         }
 
         private void DisableAllColliders(){
