@@ -105,7 +105,6 @@ namespace _Scripts.Game.InputControl
                     case TouchPhase.Stationary:
                         if(_isPlayerTouched && _moveAllowed){
                             _isDragging = true;
-                            Vector2 touchMovement = touch.deltaPosition * 1.5f;
                             transform.position = touchPos;
                         }
                     break;
