@@ -7,12 +7,12 @@ namespace _Scripts.Game.Environment
     {
         protected const float DeadZone = -10f;
         private Transform _player;
-        private void Start()
+        void Start()
         {
             _player = GameObject.FindWithTag("Frog").transform;
         }
         
-        private void Update()
+        void Update()
         {
             if (transform.position.y < _player.transform.position.y + DeadZone)
             {
