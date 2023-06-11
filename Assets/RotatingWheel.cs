@@ -5,11 +5,11 @@ using UnityEngine;
 public class RotatingWheel : MonoBehaviour
 {
     public float rotationSpeed;
+    public bool isWheelSpinning;
     private bool isBeingTouched = false;
     private CircleCollider2D wheelCollider;
     private Vector3 previousTouchPosition;
     private Quaternion initialRotation;
-
     private Quaternion targetRotation;
     private Quaternion currentRotation;
 
@@ -18,6 +18,7 @@ public class RotatingWheel : MonoBehaviour
         wheelCollider = GetComponent<CircleCollider2D>();
         initialRotation = transform.rotation;
         currentRotation = transform.rotation;
+        isWheelSpinning = false;
     }
 
     void Update()
@@ -44,9 +45,12 @@ public class RotatingWheel : MonoBehaviour
                         targetRotation = initialRotation * Quaternion.Euler(0f, 0f, angle);
                         currentRotation = Quaternion.Slerp(currentRotation, targetRotation, rotationSpeed * Time.deltaTime);
                         transform.rotation = currentRotation;
-
                         previousTouchPosition = touchPos;
+                        isWheelSpinning = true;
                     }
+                    break;
+                case TouchPhase.Ended:
+                    isWheelSpinning = false;
                     break;
             }
         }
