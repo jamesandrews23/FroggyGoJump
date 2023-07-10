@@ -8,6 +8,9 @@ TagManager:
   - Hook
   - Frog
   - InputController
+  - Food
+  - Tongue
+  - Consumable
   layers:
   - Default
   - TransparentFX

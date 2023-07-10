@@ -27,6 +27,7 @@ namespace _Scripts.Game.InputControl
         public float maxLaunchForce = 100f;
         public float defaultLaunchSpeed = 5f;
         private bool _isPlayerTouched = false;
+        private bool consuming = false;
 
         // Start is called before the first frame update
         void Start()
@@ -98,7 +99,21 @@ namespace _Scripts.Game.InputControl
                             }
                         } else {
                             if(!_isInAir)
-                                Jump(touchPos);
+                            {
+                                Ray ray = Camera.main.ScreenPointToRay(touch.position);
+                                RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
+                                if(hit.collider != null && hit.collider.CompareTag("Consumable"))
+                                {
+                                    consuming = true;
+                                } else {
+                                    consuming = false;
+                                }
+
+                                if(!consuming)
+                                {
+                                    Jump(touchPos);
+                                }
+                            }
                         }
                     break;
                     case TouchPhase.Moved:

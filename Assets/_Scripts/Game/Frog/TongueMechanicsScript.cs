@@ -20,11 +20,23 @@ namespace _Scripts.Game.Frog
         public Camera mainCamera;
         
         private Hook connectedHook;
+        private Consumable food;
+        private LineRenderer line;
+
+        private bool touchedConsumable = false;
+
+        private Collider2D tongueCollision;
+
+        public float tongueSpeed = 5f;
 
         void Start()
         {
             _tongueJoint = tongue.GetComponent<SpringJoint2D>();
+            line = tongue.GetComponent<LineRenderer>();
             mainCamera = Camera.main;
+
+            line.startWidth = 0.2f;
+            line.endWidth = 0.1f;
         }
 
         // Update is called once per frame
@@ -46,6 +58,40 @@ namespace _Scripts.Game.Frog
                     _tongueJoint.enabled = true;
                     _tongueJoint.anchor = _connectedTonguePoint + new Vector2(0, tongueAnchorPointOffset);
                 }
+            } 
+        }
+
+        void LateUpdate()
+        {
+            var rayCast = GetTouchHit();
+            if (_tongueJoint.enabled)
+            {
+                Vector3 pos1 = _tongueJoint.connectedBody.transform.position;
+                Vector3 pos2 = _tongueJoint.anchor;
+                line.enabled = true;
+                line.SetPosition(0, pos1);
+                line.SetPosition(1, pos2 + new Vector3(0, -1, 0));
+            } else if (rayCast.collider != null && rayCast.collider.gameObject.CompareTag("Consumable")) {
+                touchedConsumable = true;
+                tongueCollision = rayCast.collider;
+                line.enabled = true;
+                DrawTongueValues(transform.position, tongueCollision.transform.position);
+            } else {
+                line.enabled = false;
+            }
+
+            if(touchedConsumable && tongueCollision != null){
+                tongueCollision.transform.position = Vector2.MoveTowards(tongueCollision.transform.position, transform.position, tongueSpeed * Time.deltaTime);
+                line.enabled = true;
+                DrawTongueValues(transform.position, tongueCollision.transform.position);
+            }
+        }
+
+        void OnCollisionEnter2D(Collision2D col){
+            if(col != null && col.gameObject.CompareTag("Consumable")){
+                touchedConsumable = false;
+                line.enabled = false;
+                Destroy(col.gameObject);
             }
         }
 
@@ -97,6 +143,11 @@ namespace _Scripts.Game.Frog
             }
 
             return new RaycastHit2D();
+        }
+
+        private void DrawTongueValues(Vector3 pos1, Vector3 pos2){
+            line.SetPosition(0, pos1);
+            line.SetPosition(1, pos2);    
         }
     }
 }

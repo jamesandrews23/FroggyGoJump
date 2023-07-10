@@ -188,6 +188,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   ascendDuration: 30
+  player: {fileID: 0}
 --- !u!1001 &6853792734459363364
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -242,6 +243,10 @@ PrefabInstance:
     - target: {fileID: 2547023394370787227, guid: 7576f3b8f762d5f41892afe67bb20e84, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7189394566831630942, guid: 7576f3b8f762d5f41892afe67bb20e84, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7576f3b8f762d5f41892afe67bb20e84, type: 3}
