@@ -72,10 +72,13 @@ namespace _Scripts.Game.Frog
                 line.SetPosition(0, pos1);
                 line.SetPosition(1, pos2 + new Vector3(0, -1, 0));
             } else if (rayCast.collider != null && rayCast.collider.gameObject.CompareTag("Consumable")) {
-                touchedConsumable = true;
-                tongueCollision = rayCast.collider;
-                line.enabled = true;
-                DrawTongueValues(transform.position, tongueCollision.transform.position);
+                float distance = Vector2.Distance(transform.position, rayCast.collider.transform.position);
+                if(distance <= distanceToHookThreshold){
+                    touchedConsumable = true;
+                    tongueCollision = rayCast.collider;
+                    line.enabled = true;
+                    DrawTongueValues(transform.position, tongueCollision.transform.position);
+                }
             } else {
                 line.enabled = false;
             }
