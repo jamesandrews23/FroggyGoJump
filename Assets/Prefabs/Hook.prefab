@@ -41,8 +41,8 @@ GameObject:
   m_Component:
   - component: {fileID: 9187200752929997089}
   - component: {fileID: 9187200752929997090}
-  - component: {fileID: -4012239875357646426}
   - component: {fileID: 7071015265536278349}
+  - component: {fileID: -4012239875357646426}
   m_Layer: 6
   m_Name: Hook
   m_TagString: Hook
@@ -118,18 +118,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &-4012239875357646426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9187200752929997091}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8d98050a4a5400a9dcc8e23a750f19b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!61 &7071015265536278349
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -156,3 +144,15 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-4012239875357646426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9187200752929997091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8d98050a4a5400a9dcc8e23a750f19b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

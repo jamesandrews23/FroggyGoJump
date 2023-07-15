@@ -68,14 +68,21 @@ namespace _Scripts.Game.Environment
             enabled = true;
         }
 
-        private void OnCollisionEnter2D(Collision2D collision){
-            if(collision.gameObject.CompareTag("Frog") && collision.gameObject.transform.position.y >= transform.position.y)
-                collision.collider.transform.SetParent(transform);
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if(collision.gameObject.CompareTag("Frog"))
+            {
+                Debug.Log("Trigger");
+                collision.gameObject.transform.SetParent(transform);
+            }
         }
 
-        private void OnCollisionExit2D(Collision2D collision){
+        private void OnTriggerExit2D(Collider2D collision)
+        {
             if(collision.gameObject.CompareTag("Frog"))
-                collision.collider.transform.SetParent(null);
+            {
+                collision.gameObject.transform.SetParent(null);
+            }
         }
     }
 }
