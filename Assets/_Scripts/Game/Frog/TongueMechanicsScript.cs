@@ -90,14 +90,6 @@ namespace _Scripts.Game.Frog
             }
         }
 
-        void OnCollisionEnter2D(Collision2D col){
-            if(col != null && col.gameObject.CompareTag("Consumable")){
-                touchedConsumable = false;
-                line.enabled = false;
-                Destroy(col.gameObject);
-            }
-        }
-
         public Vector3 GetAttachedTonguePoint()
         {
             return _connectedTonguePoint;

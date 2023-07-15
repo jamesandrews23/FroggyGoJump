@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class Consumable : MonoBehaviour
 {
-    void OnCollisionEnter2D(Collision2D col){
-        if(col.gameObject.CompareTag("Tongue")){
-            transform.SetParent(col.gameObject.transform);
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.CompareTag("Frog"))
+        {
+            Destroy(gameObject);
         }
     }
 }
