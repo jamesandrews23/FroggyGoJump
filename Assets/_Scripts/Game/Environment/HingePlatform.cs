@@ -1,50 +1,61 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using _Scripts.Game.Environment;
 using UnityEngine;
 
-public class HingePlatform : Platform
-{    
+public class HingePlatform : MonoBehaviour
+{
     public float dropDelay = 1f;
-    public bool hasDropped = false;
-    private Rigidbody2D rb;
-    private HingeJoint2D joint;
+    public float returnDelay = 1f;
+    public float dropAngle = -90f;
 
-    void Start()
+    private Quaternion originalRotation;
+    private Quaternion targetRotation;
+    private bool isDropping = false;
+
+    private void Start()
     {
-        rb = gameObject.GetComponent<Rigidbody2D>();
-        joint = gameObject.GetComponent<HingeJoint2D>();
+        originalRotation = transform.rotation;
+        targetRotation = originalRotation * Quaternion.Euler(0f, 0f, dropAngle);
     }
 
-    void Update()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(hasDropped){
-            StartCoroutine(DelayedReplace());
-        } 
-    }
-
-    private void OnCollisionEnter2D(Collision2D col)
-    {
-        if(col.gameObject.CompareTag("Frog")){
-            StartCoroutine(DelayedDrop());
+        if (collision.gameObject.CompareTag("Frog") && !isDropping)
+        {
+            isDropping = true;
+            StartCoroutine(DropAndReturn());
         }
     }
 
-    private IEnumerator DelayedDrop()
+    private IEnumerator DropAndReturn()
     {
         yield return new WaitForSeconds(dropDelay);
-        rb.bodyType = RigidbodyType2D.Dynamic;
-        hasDropped = true;
+
+        // Drop the platform
+        StartCoroutine(RotatePlatform(targetRotation));
+
+        yield return new WaitForSeconds(returnDelay);
+
+        // Return the platform to its original position
+        StartCoroutine(RotatePlatform(originalRotation));
+
+        isDropping = false;
     }
 
-    private IEnumerator DelayedReplace()
+    private IEnumerator RotatePlatform(Quaternion targetRotation)
     {
-        yield return new WaitForSeconds(dropDelay);
-        hasDropped = false;
-        joint.useMotor = true;
-        JointMotor2D motor = joint.motor;
-        motor.motorSpeed = 100;
-        joint.motor = motor;
+        Quaternion startRotation = transform.rotation;
+        float elapsedTime = 0f;
+        float rotationDuration = 1f; // Adjust as needed for the desired rotation speed
+
+        while (elapsedTime < rotationDuration)
+        {
+            float t = elapsedTime / rotationDuration;
+            transform.rotation = Quaternion.Lerp(startRotation, targetRotation, t);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure the platform ends at the target rotation
+        transform.rotation = targetRotation;
     }
 }

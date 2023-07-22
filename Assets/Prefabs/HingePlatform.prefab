@@ -206,7 +206,7 @@ HingeJoint2D:
   m_UseMotor: 0
   m_Motor:
     m_MotorSpeed: 100
-    m_MaximumMotorForce: 100
+    m_MaximumMotorForce: 500
   m_UseLimits: 1
   m_AngleLimits:
     m_LowerAngle: 0
@@ -224,5 +224,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dropDelay: 1
-  hasDropped: 0
-  replaced: 0
+  returnDelay: 1
+  dropAngle: 90
