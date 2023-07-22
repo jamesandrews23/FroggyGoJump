@@ -17,6 +17,8 @@ namespace _Scripts.Level
         private Vector3 _rightWallPos;
         private float _nearWallCheck;
         private float _wallBuffer;
+        public GameObject consumable;
+        public float consumableBuffer = 5f;
         private void Awake()
         {
             _leftWallPos = new Vector3(FindLeftScreenBorder(), 5, 0);
@@ -39,7 +41,20 @@ namespace _Scripts.Level
             {
                 SpawnLevelPart();
                 SpawnWallPart();
+                SpawnCollectable();
             }
+        }
+
+        private void SpawnConsumable()
+        {
+
+        }
+
+        private void SpawnCollectable()
+        {
+            Vector3 position = new Vector3(Random.Range(FindRightScreenBorder(), FindLeftScreenBorder()), player.transform.position.y * consumableBuffer, 0);
+            GameObject newCoin = Instantiate(consumable);
+            newCoin.transform.position = position;
         }
 
         private void SpawnWallPart()
