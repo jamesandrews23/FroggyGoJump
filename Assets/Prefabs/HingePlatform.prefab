@@ -44,7 +44,6 @@ GameObject:
   - component: {fileID: 2547023394370787226}
   - component: {fileID: 6694784662414097887}
   - component: {fileID: 6995569956549481292}
-  - component: {fileID: 5221435760989785425}
   - component: {fileID: 460587864779891550}
   m_Layer: 8
   m_Name: HingePlatform
@@ -187,30 +186,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!233 &5221435760989785425
-HingeJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2547023394370787225}
-  m_Enabled: 1
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_AutoConfigureConnectedAnchor: 1
-  m_Anchor: {x: 0.71, y: -0.0000000071908066}
-  m_ConnectedAnchor: {x: 0.71, y: -0.0000000071908066}
-  m_UseMotor: 0
-  m_Motor:
-    m_MotorSpeed: 100
-    m_MaximumMotorForce: 500
-  m_UseLimits: 1
-  m_AngleLimits:
-    m_LowerAngle: 0
-    m_UpperAngle: -90
 --- !u!114 &460587864779891550
 MonoBehaviour:
   m_ObjectHideFlags: 0
