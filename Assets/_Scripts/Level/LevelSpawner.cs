@@ -19,6 +19,10 @@ namespace _Scripts.Level
         private float _wallBuffer;
         public GameObject consumable;
         public float consumableBuffer = 5f;
+        public float collectableVariance = 20f;
+        public GameObject collectable;
+        public float heightOffset = 100f;
+        public float playerOffset = 10f;
         private void Awake()
         {
             _leftWallPos = new Vector3(FindLeftScreenBorder(), 5, 0);
@@ -41,20 +45,24 @@ namespace _Scripts.Level
             {
                 SpawnLevelPart();
                 SpawnWallPart();
+                SpawnConsumable();
                 SpawnCollectable();
             }
         }
 
         private void SpawnConsumable()
         {
-
+            Vector3 position = new Vector3(Random.Range(FindRightScreenBorder(), FindLeftScreenBorder()), player.transform.position.y * consumableBuffer, 0);
+            GameObject newCoin = Instantiate(consumable);
+            newCoin.transform.position = position;
         }
 
         private void SpawnCollectable()
         {
-            Vector3 position = new Vector3(Random.Range(FindRightScreenBorder(), FindLeftScreenBorder()), player.transform.position.y * consumableBuffer, 0);
-            GameObject newCoin = Instantiate(consumable);
-            newCoin.transform.position = position;
+            GameObject item = Instantiate(collectable);
+            float playerPosY = player.transform.position.y;
+            float posY = Mathf.SmoothStep(playerPosY * playerOffset, playerPosY * heightOffset, Time.deltaTime * collectableVariance);
+            item.transform.position = new Vector3(Random.Range(-2, 2), posY, 0);
         }
 
         private void SpawnWallPart()

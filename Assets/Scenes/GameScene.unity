@@ -803,6 +803,10 @@ MonoBehaviour:
   wallElement: {fileID: 1776593991138919277, guid: f469ef4ef990b71489a17b1858ff63a2, type: 3}
   consumable: {fileID: 1070350266695440101, guid: 75dc836578c52164d94dba5ca0b765dd, type: 3}
   consumableBuffer: 10
+  collectableVariance: 1
+  collectable: {fileID: 6572257721415115714, guid: 94c781ae628979e44a13dc1c4f81a244, type: 3}
+  heightOffset: 100
+  playerOffset: 20
 --- !u!4 &665880670
 Transform:
   m_ObjectHideFlags: 0
