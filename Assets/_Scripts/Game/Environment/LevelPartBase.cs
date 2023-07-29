@@ -14,7 +14,7 @@ namespace _Scripts.Game.Environment
         
         void Update()
         {
-            if (transform.position.y < _player.transform.position.y + DeadZone)
+            if (transform != null && transform.position.y < _player.transform.position.y + DeadZone)
             {
                 Destroy(gameObject);
             }
