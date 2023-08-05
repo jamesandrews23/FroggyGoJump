@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 namespace _Scripts.Game.SceneManagement
 {
-    public class GameOverScreen : MonoBehaviour
+    public class ContinueScreen : MonoBehaviour
     {
         public void Setup()
         {
@@ -18,6 +18,7 @@ namespace _Scripts.Game.SceneManagement
 
         public void ExitButton()
         {
+            //todo need to setup a main menu screen
             SceneManager.LoadScene("MainMenu"); 
         }
     }

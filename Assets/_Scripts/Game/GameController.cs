@@ -6,22 +6,14 @@ namespace _Scripts.Game
 {
     public class GameController : MonoBehaviour
     {
-        public GameOverScreen gameOverScreen;
-        // Start is called before the first frame update
+        public ContinueScreen gameOverScreen;
         public GameObject player;
-
         private Controls _frogControls;
 
-        private void GameOver()
-        {
-            gameOverScreen.Setup((int) player.GetComponent<Controls>().maxHeightReached);
-        }
         void Start()
         {
             _frogControls = player.GetComponent<Controls>();
         }
-
-        // Update is called once per frame
         void Update()
         {
             float cameraBottomY = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, Camera.main.nearClipPlane)).y;
@@ -31,6 +23,10 @@ namespace _Scripts.Game
                 player.SetActive(false);
                 GameOver();
             }
+        }
+        private void GameOver()
+        {
+            gameOverScreen.Setup();
         }
     }
 }
