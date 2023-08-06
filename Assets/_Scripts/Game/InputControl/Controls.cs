@@ -28,6 +28,7 @@ namespace _Scripts.Game.InputControl
         public float defaultLaunchSpeed = 5f;
         private bool _isPlayerTouched = false;
         private bool consuming = false;
+        public Animator legendaryAnim;
 
         // Start is called before the first frame update
         void Start()
@@ -43,6 +44,10 @@ namespace _Scripts.Game.InputControl
         // Update is called once per frame
         void Update()
         {
+            Debug.Log("Velocity: " + _rigidbody2D.velocity.y);
+            if(_rigidbody2D.velocity.y >= 20f){
+                legendaryAnim.SetTrigger("Start");
+            }
             // CheckFacingDirection();
 
             //determines if player is in the air i.e. not on a platform, falling or flying
@@ -177,7 +182,8 @@ namespace _Scripts.Game.InputControl
             if (angle < 25)
             {
                 _rigidbody2D.AddForce(Vector2.up * jumpUpForce, ForceMode2D.Impulse);
-            } else 
+            } 
+            else 
             {
                 if (touchPosition.x > transform.position.x)
                 {
