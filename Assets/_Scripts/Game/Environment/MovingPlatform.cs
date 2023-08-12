@@ -72,7 +72,6 @@ namespace _Scripts.Game.Environment
         {
             if(collision.gameObject.CompareTag("Frog"))
             {
-                Debug.Log("Trigger");
                 collision.gameObject.transform.SetParent(transform);
             }
         }

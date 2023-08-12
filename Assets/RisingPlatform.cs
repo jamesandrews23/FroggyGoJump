@@ -8,7 +8,6 @@ public class RisingPlatform : MonoBehaviour
     private GameObject wheel;
     private bool isTouchHeld;
     private float touchStartTime;
-    private float touchHoldDuration = 1f;
     private RotatingWheel rotatingWheelScript;
     // Start is called before the first frame update
     private bool isWheelRotating;

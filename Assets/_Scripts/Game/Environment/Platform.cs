@@ -5,8 +5,6 @@ namespace _Scripts.Game.Environment
 {
     public class Platform : LevelPartBase
     {
-        
-
         private void OnTriggerEnter2D(Collider2D col)
         {
             if (col.gameObject.CompareTag("Frog"))

@@ -44,7 +44,6 @@ namespace _Scripts.Game.InputControl
         // Update is called once per frame
         void Update()
         {
-            Debug.Log("Velocity: " + _rigidbody2D.velocity.y);
             if(_rigidbody2D.velocity.y >= 20f){
                 legendaryAnim.SetTrigger("Start");
             }
