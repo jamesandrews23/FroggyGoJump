@@ -1,3 +1,4 @@
+using _Scripts.Level;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,6 +14,7 @@ namespace _Scripts.Game.SceneManagement
 
         public void RestartButton()
         {
+            GlobalVariables.coinsCollected = 0;
             SceneManager.LoadScene("GameScene");
         }
 

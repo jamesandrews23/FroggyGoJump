@@ -116,3 +116,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coinGrowthFactor: 1
   duration: 35
+  coinPlayerOffset: 1
+  coinPursePos: {fileID: 0}
+  canvasCoin: {fileID: 7119130148442210506, guid: 6bd4f2d0bd6825141bf6610f340a37e4, type: 3}

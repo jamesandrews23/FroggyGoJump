@@ -2,54 +2,98 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
+using System.Threading.Tasks;
+using _Scripts.Level;
+using TMPro;
 
 public class CoinCollector : MonoBehaviour
 {
-    private Vector3 coinPurse = Vector3.zero; // Drag and drop the Treasure Chest RectTransform here in the Inspector
+    private Vector3 _coinPurse = Vector3.zero; // Drag and drop the Treasure Chest RectTransform here in the Inspector
     public float coinGrowthFactor = 2.0f;
     public float duration = 10.0f;
+    public float coinPlayerOffset = 5f;
+    public RectTransform coinTarget;
+    private Canvas _canvas;
+    public GameObject canvasCoin;
+    public float cycle = 1f;
+    private Tween _shakeTween;
+    private ParticleSystem _starExplosion;
+    private static TextMeshProUGUI _scoreText;
+    private int _score;
+
     public void Start()
     {
-        if (GameManager.CoinPurseRectTransform != null)
-        {
-            Vector2 localPositionInCoinPurse = new Vector2(0.5f, 0.5f);
-            Vector3 globalPosition = GameManager.CoinPurseRectTransform.TransformPoint(localPositionInCoinPurse);
-            Vector3 localPosition = Camera.main.ScreenToWorldPoint(globalPosition);
-            coinPurse = localPosition;
-            Debug.Log("Coin Purse Transform: " + coinPurse);
-        }
-        else
-        {
-            Debug.LogWarning("Coin purse reference not set!");
-        }
+        _score = GlobalVariables.coinsCollected;
+        _canvas = GameManager.Canvas;
+        coinTarget = GameManager.CoinTarget;
+        _starExplosion = GameManager.StarExplosion;
+        _scoreText = GameManager.TextMeshProUGUI;
+        _scoreText.text = "" + _score;
     }
-    // When a coin collides with the player
+
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Frog"))
         {
-            // Increasae size of coin
-            gameObject.transform.localScale *= coinGrowthFactor;
-            // Move the coin towards the treasure chest using a coroutine
-            StartCoroutine(MoveCoinToChest(gameObject, coinPurse));
+            //first convert coin's coordinates to canvas coordiantes
+            var canvasCoords = ConvertWorldToCanvasSpace(gameObject.transform.position);
+            var generateCanvasObject = GenerateCanvasObject(canvasCoords);
+            //remove this game object from scene
+            Destroy(gameObject);
+            //move coin to coin purse
+            MoveCanvasCoin(generateCanvasObject, coinTarget.position);
         }
     }
 
-    // Coroutine to move the coin towards the treasure chest
-    private IEnumerator MoveCoinToChest(GameObject coin, Vector3 targetPosition)
+    Vector2 ConvertWorldToCanvasSpace(Vector3 worldPosition)
     {
-        float timer = 0.0f;
-        
-        while (timer < duration)
+        // Convert world position to screen position
+        if (Camera.main != null)
         {
-            // Resize the coin to gradually make it smaller
-            if(coin.transform.localScale.x > 0.25f)
-                coin.transform.localScale *= (1 - timer / duration) * 1;
+            Vector2 screenPosition = Camera.main.WorldToScreenPoint(worldPosition);
 
-            coin.transform.position = Vector3.Lerp(coin.transform.position, targetPosition, timer / duration);
-            timer += Time.deltaTime;
-            yield return null;
+            // Convert screen position to canvas space
+            var canvasPosition = Vector2.zero;
+            switch (_canvas.renderMode)
+            {
+                case RenderMode.ScreenSpaceOverlay:
+                    canvasPosition = screenPosition;
+                    break;
+                case RenderMode.ScreenSpaceCamera:
+                {
+                    Vector2 viewportPosition = Camera.main.ScreenToViewportPoint(screenPosition);
+                    canvasPosition = new Vector2(viewportPosition.x * _canvas.pixelRect.width, viewportPosition.y * _canvas.pixelRect.height);
+                    break;
+                }
+            }
+
+            return canvasPosition;
         }
+        else
+        {
+            return Vector3.zero;
+        }
+    }
+
+    private GameObject GenerateCanvasObject(Vector2 position)
+    {
+            // Instantiate the objectPrefab within the canvas
+            var newObject = Instantiate(canvasCoin, _canvas.transform);
+            // adjust the position of the new gameObject in canvas to match current position
+            newObject.transform.position = position;
+            newObject.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+            newObject.GetComponent<RectTransform>().SetAsFirstSibling();
+            return newObject;
+    }
+
+    private void MoveCanvasCoin(GameObject coin, Vector3 targetPosition){
+        coin.GetComponent<RectTransform>().DOMove(targetPosition, cycle).SetEase(Ease.InBack).OnComplete(() => {
+            // _starExplosion.Play();
+            GlobalVariables.coinsCollected++;
+            _scoreText.text = "" + GlobalVariables.coinsCollected;
+        });
+        coin.GetComponent<RectTransform>().DOScale(.5f, cycle * 2);
     }
 }
 

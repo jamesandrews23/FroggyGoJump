@@ -45,8 +45,8 @@ namespace _Scripts.Level
             {
                 SpawnLevelPart();
                 SpawnWallPart();
-                SpawnConsumable();
-                SpawnCollectable();
+                // SpawnConsumable();
+                // SpawnCollectable();
             }
         }
 
