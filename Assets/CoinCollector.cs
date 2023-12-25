@@ -21,6 +21,7 @@ public class CoinCollector : MonoBehaviour
     private ParticleSystem _starExplosion;
     private static TextMeshProUGUI _scoreText;
     private int _score;
+    private AudioSource _coinSound;
 
     public void Start()
     {
@@ -30,12 +31,14 @@ public class CoinCollector : MonoBehaviour
         _starExplosion = GameManager.StarExplosion;
         _scoreText = GameManager.TextMeshProUGUI;
         _scoreText.text = "" + _score;
+        _coinSound = GameObject.Find("AudioSources").GetComponent<AudioSource>();
     }
 
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Frog"))
         {
+            _coinSound.Play();
             //first convert coin's coordinates to canvas coordiantes
             var canvasCoords = ConvertWorldToCanvasSpace(gameObject.transform.position);
             var generateCanvasObject = GenerateCanvasObject(canvasCoords);
