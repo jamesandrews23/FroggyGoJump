@@ -1,13 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Sound : MonoBehaviour
+namespace _Scripts.Game.Environment
 {
-    public AudioSource source;
-
-    public void PlayLegendarySound()
+    public class Sound : MonoBehaviour
     {
-        source.Play();
+        public AudioSource source;
+
+        public void PlayLegendarySound()
+        {
+            source.Play();
+        }
     }
 }

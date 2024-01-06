@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace _Scripts.Level
+﻿namespace _Scripts.Game.Level
 {
     public static class GlobalVariables
     {

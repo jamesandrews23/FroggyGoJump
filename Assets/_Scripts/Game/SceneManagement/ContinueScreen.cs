@@ -1,4 +1,4 @@
-using _Scripts.Level;
+using _Scripts.Game.Level;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;

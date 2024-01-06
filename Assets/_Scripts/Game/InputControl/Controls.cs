@@ -1,5 +1,4 @@
-using _Scripts.Game.Environment;
-using _Scripts.Game.Frog;
+using _Scripts.Game.Player;
 using UnityEngine;
 
 namespace _Scripts.Game.InputControl

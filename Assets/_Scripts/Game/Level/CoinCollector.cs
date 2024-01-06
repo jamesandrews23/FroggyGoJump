@@ -1,6 +1,7 @@
+using _Scripts.Game;
+using _Scripts.Game.Level;
 using UnityEngine;
 using DG.Tweening;
-using _Scripts.Level;
 using TMPro;
 
 public class CoinCollector : MonoBehaviour

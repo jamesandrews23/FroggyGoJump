@@ -1,6 +1,5 @@
 using _Scripts.Game.InputControl;
 using _Scripts.Game.SceneManagement;
-using _Scripts.Level;
 using UnityEngine;
 
 namespace _Scripts.Game

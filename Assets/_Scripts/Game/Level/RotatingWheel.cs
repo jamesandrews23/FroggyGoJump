@@ -1,101 +1,102 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class RotatingWheel : MonoBehaviour
+namespace _Scripts.Game.Level
 {
-    public float rotationSpeed;
-    public bool isWheelSpinning;
-    private bool isBeingTouched = false;
-    private CircleCollider2D wheelCollider;
-    private Vector3 previousTouchPosition;
-    private Quaternion initialRotation;
-    private Quaternion targetRotation;
-    private Quaternion currentRotation;
-    private Quaternion previousRotation;
-
-    void Start()
+    public class RotatingWheel : MonoBehaviour
     {
-        wheelCollider = GetComponent<CircleCollider2D>();
-        initialRotation = transform.rotation;
-        currentRotation = transform.rotation;
-        isWheelSpinning = false;
-    }
+        public float rotationSpeed;
+        public bool isWheelSpinning;
+        private bool isBeingTouched = false;
+        private CircleCollider2D wheelCollider;
+        private Vector3 previousTouchPosition;
+        private Quaternion initialRotation;
+        private Quaternion targetRotation;
+        private Quaternion currentRotation;
+        private Quaternion previousRotation;
 
-    void Update()
-    {
-        // if (Input.touchCount > 0)
-        // {
-        //     Touch touch = Input.GetTouch(0);
-
-        //     Vector3 touchPos = Camera.main.ScreenToWorldPoint(touch.position);
-        //     touchPos.z = 0;
-        //     isBeingTouched = wheelCollider.OverlapPoint(touchPos);
-
-        //     switch (touch.phase)
-        //     {
-        //         case TouchPhase.Began:
-        //             previousTouchPosition = touchPos;
-        //             break;
-        //         case TouchPhase.Moved:
-        //             if (isBeingTouched)
-        //             {
-        //                 Vector3 touchDirection = touchPos - previousTouchPosition;
-        //                 float angle = Mathf.Atan2(touchDirection.y, touchDirection.x) * Mathf.Rad2Deg;
-
-        //                 targetRotation = initialRotation * Quaternion.Euler(0f, 0f, angle);
-        //                 currentRotation = Quaternion.Slerp(currentRotation, targetRotation, rotationSpeed * Time.deltaTime);
-        //                 transform.rotation = currentRotation;
-        //                 previousTouchPosition = touchPos;
-        //                 isWheelSpinning = true;
-        //             }
-        //             break;
-        //         case TouchPhase.Ended:
-        //             isWheelSpinning = false;
-        //             break;
-        //     }
-        // }
-
-        if (Input.touchCount > 0)
+        void Start()
         {
-            Touch touch = Input.GetTouch(0);
+            wheelCollider = GetComponent<CircleCollider2D>();
+            initialRotation = transform.rotation;
+            currentRotation = transform.rotation;
+            isWheelSpinning = false;
+        }
 
-            Vector3 touchPos = Camera.main.ScreenToWorldPoint(touch.position);
-            touchPos.z = 0;
-            isBeingTouched = wheelCollider.OverlapPoint(touchPos);
+        void Update()
+        {
+            // if (Input.touchCount > 0)
+            // {
+            //     Touch touch = Input.GetTouch(0);
 
-            switch (touch.phase)
+            //     Vector3 touchPos = Camera.main.ScreenToWorldPoint(touch.position);
+            //     touchPos.z = 0;
+            //     isBeingTouched = wheelCollider.OverlapPoint(touchPos);
+
+            //     switch (touch.phase)
+            //     {
+            //         case TouchPhase.Began:
+            //             previousTouchPosition = touchPos;
+            //             break;
+            //         case TouchPhase.Moved:
+            //             if (isBeingTouched)
+            //             {
+            //                 Vector3 touchDirection = touchPos - previousTouchPosition;
+            //                 float angle = Mathf.Atan2(touchDirection.y, touchDirection.x) * Mathf.Rad2Deg;
+
+            //                 targetRotation = initialRotation * Quaternion.Euler(0f, 0f, angle);
+            //                 currentRotation = Quaternion.Slerp(currentRotation, targetRotation, rotationSpeed * Time.deltaTime);
+            //                 transform.rotation = currentRotation;
+            //                 previousTouchPosition = touchPos;
+            //                 isWheelSpinning = true;
+            //             }
+            //             break;
+            //         case TouchPhase.Ended:
+            //             isWheelSpinning = false;
+            //             break;
+            //     }
+            // }
+
+            if (Input.touchCount > 0)
             {
-                case TouchPhase.Began:
-                    previousTouchPosition = touchPos;
-                    break;
-                case TouchPhase.Moved:
-                    if (isBeingTouched)
-                    {
-                        Vector3 touchDirection = touchPos - previousTouchPosition;
-                        float angle = Mathf.Atan2(touchDirection.y, touchDirection.x) * Mathf.Rad2Deg;
+                Touch touch = Input.GetTouch(0);
 
-                        targetRotation = initialRotation * Quaternion.Euler(0f, 0f, angle);
-                        currentRotation = Quaternion.Slerp(currentRotation, targetRotation, rotationSpeed * Time.deltaTime);
-                        transform.rotation = currentRotation;
+                Vector3 touchPos = Camera.main.ScreenToWorldPoint(touch.position);
+                touchPos.z = 0;
+                isBeingTouched = wheelCollider.OverlapPoint(touchPos);
+
+                switch (touch.phase)
+                {
+                    case TouchPhase.Began:
                         previousTouchPosition = touchPos;
+                        break;
+                    case TouchPhase.Moved:
+                        if (isBeingTouched)
+                        {
+                            Vector3 touchDirection = touchPos - previousTouchPosition;
+                            float angle = Mathf.Atan2(touchDirection.y, touchDirection.x) * Mathf.Rad2Deg;
 
-                        // Calculate the difference between the current and previous rotation
-                        Quaternion deltaRotation = currentRotation * Quaternion.Inverse(previousRotation);
+                            targetRotation = initialRotation * Quaternion.Euler(0f, 0f, angle);
+                            currentRotation = Quaternion.Slerp(currentRotation, targetRotation, rotationSpeed * Time.deltaTime);
+                            transform.rotation = currentRotation;
+                            previousTouchPosition = touchPos;
 
-                        // Convert the delta rotation to an angle
-                        float rotationAngle = Quaternion.Angle(Quaternion.identity, deltaRotation);
+                            // Calculate the difference between the current and previous rotation
+                            Quaternion deltaRotation = currentRotation * Quaternion.Inverse(previousRotation);
 
-                        // Check if the rotation angle is above a threshold to consider it as spinning
-                        float rotationThreshold = 2f;
-                        isWheelSpinning = rotationAngle > rotationThreshold;
+                            // Convert the delta rotation to an angle
+                            float rotationAngle = Quaternion.Angle(Quaternion.identity, deltaRotation);
 
-                        previousRotation = currentRotation;
-                    }
-                    break;
-                case TouchPhase.Ended:
-                    isWheelSpinning = false;
-                    break;
+                            // Check if the rotation angle is above a threshold to consider it as spinning
+                            float rotationThreshold = 2f;
+                            isWheelSpinning = rotationAngle > rotationThreshold;
+
+                            previousRotation = currentRotation;
+                        }
+                        break;
+                    case TouchPhase.Ended:
+                        isWheelSpinning = false;
+                        break;
+                }
             }
         }
     }

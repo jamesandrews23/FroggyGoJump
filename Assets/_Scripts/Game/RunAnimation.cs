@@ -1,19 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class RunAnimation : MonoBehaviour
+namespace _Scripts.Game
 {
-    public GameObject player;
-    Animator animator;
-    // Start is called before the first frame update
-    void Start()
+    public class RunAnimation : MonoBehaviour
     {
-        animator = GetComponent<Animator>();
-    }
+        public GameObject player;
+        Animator animator;
+        // Start is called before the first frame update
+        void Start()
+        {
+            animator = GetComponent<Animator>();
+        }
 
-    private void TriggerAnimation()
-    {
-        animator.SetTrigger("Start");
+        private void TriggerAnimation()
+        {
+            animator.SetTrigger("Start");
+        }
     }
 }

@@ -1,9 +1,10 @@
-using UnityEngine;
-
-public class Coins : Collectables
+namespace _Scripts.Game.Environment
 {
-    public override void AddToCollection(){
-        //override this
-        // GameManager.coins++;
+    public class Coins : Collectables
+    {
+        public override void AddToCollection(){
+            //override this
+            // GameManager.coins++;
+        }
     }
 }

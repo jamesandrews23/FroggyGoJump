@@ -1,54 +1,57 @@
 using UnityEngine;
 
-public class UtilityFunctions : MonoBehaviour
+namespace _Scripts.Game
 {
-    private static UtilityFunctions _instance;
-
-    public static UtilityFunctions Instance
+    public class UtilityFunctions : MonoBehaviour
     {
-        get
-        {
-            // Check if the instance is null
-            if (_instance != null) return _instance;
-            // Find the existing instance in the scene
-            _instance = FindObjectOfType<UtilityFunctions>();
+        private static UtilityFunctions _instance;
 
-            // If no instance exists, create a new one
-            if (_instance != null) return _instance;
-            var singletonObject = new GameObject(nameof(UtilityFunctions));
-            _instance = singletonObject.AddComponent<UtilityFunctions>();
+        public static UtilityFunctions Instance
+        {
+            get
+            {
+                // Check if the instance is null
+                if (_instance != null) return _instance;
+                // Find the existing instance in the scene
+                _instance = FindObjectOfType<UtilityFunctions>();
 
-            return _instance;
-        }
-    }
+                // If no instance exists, create a new one
+                if (_instance != null) return _instance;
+                var singletonObject = new GameObject(nameof(UtilityFunctions));
+                _instance = singletonObject.AddComponent<UtilityFunctions>();
 
-    public static float FindRightScreenBorder()
-    {
-        var mainCamera = Camera.main;
-        if (mainCamera != null)
-        {
-            var cameraHeight = 2f * mainCamera.orthographicSize;
-            var cameraWidth = cameraHeight * mainCamera.aspect;
-            return mainCamera.transform.position.x + cameraWidth / 2f;
+                return _instance;
+            }
         }
-        else
-        {
-            return 0f;
-        }
-    }
 
-    public static float FindLeftScreenBorder()
-    {
-        var mainCamera = Camera.main;
-        if (mainCamera != null)
+        public static float FindRightScreenBorder()
         {
-            var cameraHeight = 2f * mainCamera.orthographicSize;
-            var cameraWidth = cameraHeight * mainCamera.aspect;
-            return mainCamera.transform.position.x - cameraWidth / 2f;
+            var mainCamera = Camera.main;
+            if (mainCamera != null)
+            {
+                var cameraHeight = 2f * mainCamera.orthographicSize;
+                var cameraWidth = cameraHeight * mainCamera.aspect;
+                return mainCamera.transform.position.x + cameraWidth / 2f;
+            }
+            else
+            {
+                return 0f;
+            }
         }
-        else
+
+        public static float FindLeftScreenBorder()
         {
-            return 0f;
+            var mainCamera = Camera.main;
+            if (mainCamera != null)
+            {
+                var cameraHeight = 2f * mainCamera.orthographicSize;
+                var cameraWidth = cameraHeight * mainCamera.aspect;
+                return mainCamera.transform.position.x - cameraWidth / 2f;
+            }
+            else
+            {
+                return 0f;
+            }
         }
     }
 }

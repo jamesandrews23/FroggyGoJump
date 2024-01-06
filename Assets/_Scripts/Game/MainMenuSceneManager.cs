@@ -1,17 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenuSceneManager : MonoBehaviour
+namespace _Scripts.Game
 {
-    public void PlayGame()
+    public class MainMenuSceneManager : MonoBehaviour
     {
-        SceneManager.LoadScene("GameScene");
-    }
+        public void PlayGame()
+        {
+            SceneManager.LoadScene("GameScene");
+        }
 
-    public void ExitGame()
-    {
-        Application.Quit();
+        public void ExitGame()
+        {
+            Application.Quit();
+        }
     }
 }

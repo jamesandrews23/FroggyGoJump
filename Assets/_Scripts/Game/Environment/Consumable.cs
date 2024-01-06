@@ -1,12 +1,15 @@
 using UnityEngine;
 
-public class Consumable : MonoBehaviour
+namespace _Scripts.Game.Environment
 {
-    private void OnTriggerEnter2D(Collider2D collision)
+    public class Consumable : MonoBehaviour
     {
-        if(collision.gameObject.CompareTag("Frog"))
+        private void OnTriggerEnter2D(Collider2D collision)
         {
-            Destroy(gameObject);
+            if(collision.gameObject.CompareTag("Frog"))
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

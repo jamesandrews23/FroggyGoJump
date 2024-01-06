@@ -1,7 +1,7 @@
 using _Scripts.Game.Environment;
 using UnityEngine;
 
-namespace _Scripts.Game.Frog
+namespace _Scripts.Game.Player
 {
     public class TongueMechanicsScript : MonoBehaviour
     {

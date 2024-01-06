@@ -2,7 +2,7 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace _Scripts.Level
+namespace _Scripts.Game.Level
 {
     public class LevelSpawner : MonoBehaviour
     {
