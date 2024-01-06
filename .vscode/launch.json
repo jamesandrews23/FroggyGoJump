@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Unity Editor",
+            "type": "unity",
+            "request": "launch",
+            "port": 55555,
+            "stopOnEntry": false,
+            "trace": "log",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": null,
+            "runtimeArgs": [
+                "-projectPath", "${workspaceFolder}",
+                "-executeMethod", "_Scripts.Game.InputControl.Controls.Start"
+            ],
+            "env": {
+                "MONO_ENV_OPTIONS": "--debug=port=55555"
+            },
+            "sourceMaps": true,
+        }
+    ]
+}
