@@ -16,8 +16,8 @@ namespace _Scripts.Game.Environment
         public Transform player;
 
         private void Start(){
-            leftScreenBorder = UtilityFunctions.Instance.FindLeftScreenBorder();
-            rightScreenBorder = UtilityFunctions.Instance.FindRightScreenBorder();
+            leftScreenBorder = UtilityFunctions.FindLeftScreenBorder();
+            rightScreenBorder = UtilityFunctions.FindRightScreenBorder();
           
             startPos = new Vector3(rightScreenBorder - 1f, transform.position.y, 0);
             endPos = new Vector3(leftScreenBorder + 1f, transform.position.y, 0);

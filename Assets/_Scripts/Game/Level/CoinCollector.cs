@@ -1,18 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using DG.Tweening;
-using System.Threading.Tasks;
 using _Scripts.Level;
 using TMPro;
 
 public class CoinCollector : MonoBehaviour
 {
-    private Vector3 _coinPurse = Vector3.zero; // Drag and drop the Treasure Chest RectTransform here in the Inspector
-    public float coinGrowthFactor = 2.0f;
-    public float duration = 10.0f;
-    public float coinPlayerOffset = 5f;
     public RectTransform coinTarget;
     private Canvas _canvas;
     public GameObject canvasCoin;
