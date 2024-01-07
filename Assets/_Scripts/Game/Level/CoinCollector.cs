@@ -1,4 +1,5 @@
 using _Scripts.Game;
+using _Scripts.Game.Environment;
 using _Scripts.Game.Level;
 using UnityEngine;
 using DG.Tweening;
@@ -14,7 +15,7 @@ public class CoinCollector : MonoBehaviour
     private ParticleSystem _starExplosion;
     private static TextMeshProUGUI _scoreText;
     private int _score;
-    private AudioSource _coinSound;
+    private AudioManager _audioManager;
 
     public void Start()
     {
@@ -24,14 +25,14 @@ public class CoinCollector : MonoBehaviour
         _starExplosion = GameManager.StarExplosion;
         _scoreText = GameManager.TextMeshProUGUI;
         _scoreText.text = "" + _score;
-        _coinSound = GameObject.Find("AudioSources").GetComponent<AudioSource>();
+        _audioManager = GameObject.Find("AudioManagerObject").GetComponent<AudioManager>();
     }
 
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Frog"))
         {
-            _coinSound.Play();
+            _audioManager.PlaySource(0);
             //first convert coin's coordinates to canvas coordiantes
             var canvasCoords = ConvertWorldToCanvasSpace(gameObject.transform.position);
             var generateCanvasObject = GenerateCanvasObject(canvasCoords);
@@ -88,6 +89,7 @@ public class CoinCollector : MonoBehaviour
             // _starExplosion.Play();
             GlobalVariables.coinsCollected++;
             _scoreText.text = "" + GlobalVariables.coinsCollected;
+            _audioManager.PlaySource(1);
         });
         coin.GetComponent<RectTransform>().DOScale(.5f, cycle * 2);
     }

@@ -1,3 +1,4 @@
+using _Scripts.Game.Environment;
 using _Scripts.Game.Player;
 using UnityEngine;
 
@@ -28,6 +29,7 @@ namespace _Scripts.Game.InputControl
         private bool _isPlayerTouched = false;
         private bool consuming = false;
         public Animator legendaryAnim;
+        private AudioManager _audioManager;
 
         // Start is called before the first frame update
         void Start()
@@ -38,6 +40,7 @@ namespace _Scripts.Game.InputControl
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _rigidbody2D.freezeRotation = true; //adding this to prevent the frog's body from rotating while tongue is attached
             _isDragging = false;
+            _audioManager = GameObject.Find("AudioManagerObject").GetComponent<AudioManager>();
         }
 
         // Update is called once per frame
@@ -88,6 +91,7 @@ namespace _Scripts.Game.InputControl
                     case TouchPhase.Began:
                         if(_tongueSpringJoint2D.enabled){
                             if(_isPlayerTouched){
+                                _audioManager.PlaySource(4);
                                 _initialTouchPos = touchPos;
                                 _deltaX = touchPos.x - transform.position.x;
                                 _deltaY = touchPos.y - transform.position.y;
@@ -127,6 +131,7 @@ namespace _Scripts.Game.InputControl
                         }
                     break;
                     case TouchPhase.Ended:
+                        _audioManager.StopSource(4);
                         _isDragging = false;
                         _moveAllowed = false;
                         _rigidbody2D.gravityScale = 2;
@@ -174,7 +179,7 @@ namespace _Scripts.Game.InputControl
         private void Jump(Vector3 touchPosition)
         {
             touchPosition.z = 0;
-            
+            _audioManager.PlaySource(2);
             float angle = Vector3.Angle(touchPosition - gameObject.transform.position, Vector3.up);
 
             if (angle < 25)
