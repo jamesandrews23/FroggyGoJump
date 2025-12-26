@@ -46,13 +46,13 @@ namespace _Scripts.Game.InputControl
         // Update is called once per frame
         void Update()
         {
-            if(_rigidbody2D.velocity.y >= 20f){
+            if(_rigidbody2D.linearVelocity.y >= 20f){
                 legendaryAnim.SetTrigger("Start");
             }
             // CheckFacingDirection();
 
             //determines if player is in the air i.e. not on a platform, falling or flying
-            _isInAir = _rigidbody2D.velocity.y != 0;
+            _isInAir = _rigidbody2D.linearVelocity.y != 0;
             //Stores maximum height reached for score
             float playerPosY = _rigidbody2D.gameObject.transform.position.y;
             if (playerPosY > 0)
@@ -63,7 +63,7 @@ namespace _Scripts.Game.InputControl
                 }
             }
 
-            bool isPlayerFalling = _rigidbody2D.velocity.y < 0;
+            bool isPlayerFalling = _rigidbody2D.linearVelocity.y < 0;
 
             if(isPlayerFalling && !_isPlayerTouched){
                 EnableAllColliders();
@@ -99,7 +99,7 @@ namespace _Scripts.Game.InputControl
                                 _moveAllowed = true;
 
                                 // _rigidbody2D.freezeRotation = true;
-                                _rigidbody2D.velocity = new Vector2(0, 0);
+                                _rigidbody2D.linearVelocity = new Vector2(0, 0);
                                 _rigidbody2D.gravityScale = 0;
                                 _tongueSpringJoint2D.autoConfigureDistance = true;
                                 DisableAllColliders();
@@ -152,7 +152,7 @@ namespace _Scripts.Game.InputControl
         {
             if (!_tongueMechanicsScript.AttachedToHook())
             {
-                var xVel = _rigidbody2D.velocity.x;
+                var xVel = _rigidbody2D.linearVelocity.x;
                 if (xVel > 0)
                 {
                     transform.rotation = Quaternion.Euler(facingRightRotation);

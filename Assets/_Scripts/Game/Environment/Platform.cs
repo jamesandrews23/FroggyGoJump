@@ -11,7 +11,7 @@ namespace _Scripts.Game.Environment
             {
                 Rigidbody2D frog = col.GetComponent<Rigidbody2D>();
 
-                if (frog.velocity.y > 0)
+                if (frog.linearVelocity.y > 0)
                 {
                     var box2d = gameObject.GetComponent<BoxCollider2D>();
                     box2d.enabled = false;
