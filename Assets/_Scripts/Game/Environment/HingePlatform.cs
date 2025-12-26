@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _Scripts.Game.Environment
 {
-    public class HingePlatform : LevelPartBase
+    public class HingePlatform : MonoBehaviour
     {
         public float dropDelay = 1f;
         public float returnDelay = 1f;

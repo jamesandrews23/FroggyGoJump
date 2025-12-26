@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _Scripts.Game.Environment
 {
-    public class MovingPlatform : Platform
+    public class MovingPlatform : MonoBehaviour
     {
         public Vector3 startPos;
         public Vector3 endPos;
@@ -48,10 +48,6 @@ namespace _Scripts.Game.Environment
                 t = 0f;  // Ensure the platform reaches exactly the start position
                 isMovingToEnd = true;  // Change the direction of movement
                 StartCoroutine(DelayAtEndPosition());  // Start the delay coroutine
-            }
-
-            if(player.transform.position.y + DeadZone >= transform.position.y){
-                Destroy(gameObject);
             }
         }
 

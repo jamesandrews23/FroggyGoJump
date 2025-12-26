@@ -1,4 +1,3 @@
-using TMPro.Examples;
 using UnityEngine;
 
 namespace _Scripts.Game.Environment
