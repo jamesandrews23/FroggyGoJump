@@ -25,10 +25,12 @@ public class PlatformSpawner2D : MonoBehaviour
     [SerializeField] private GameObject normalPlatformPrefab;
     [SerializeField] private GameObject movingPlatformPrefab;
     [SerializeField] private GameObject breakPlatformPrefab;
+    [SerializeField] private GameObject cloudPlatformPrefab;
 
     [Header("Platform Mix")]
     [Range(0f, 1f)] [SerializeField] private float movingChance = 0.18f;
     [Range(0f, 1f)] [SerializeField] private float breakChance = 0.15f;
+    [Range(0f, 1f)] [SerializeField] private float cloudChance = 0.15f;
 
     private readonly List<SpawnedPlatform> spawned = new();
     private float nextSpawnY;
@@ -106,6 +108,7 @@ public class PlatformSpawner2D : MonoBehaviour
         float r = Random.value;
 
         // Break + moving should be mutually exclusive (easy to expand later)
+        if (r < cloudChance) return cloudPlatformPrefab;
         if (r < breakChance) return breakPlatformPrefab;
         if (r < breakChance + movingChance) return movingPlatformPrefab;
         return normalPlatformPrefab;
