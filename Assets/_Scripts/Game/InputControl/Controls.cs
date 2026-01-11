@@ -9,67 +9,108 @@ namespace _Scripts.Game.InputControl
         private Rigidbody2D _rigidbody2D;
         private bool _isInAir;
         private Touch _touch;
+
         public GameObject frogTongue;
         private SpringJoint2D _tongueSpringJoint2D;
+
         private bool _isDragging;
-        public Vector3 facingRightRotation = new Vector3(0,0,0);
-        public Vector3 facingLeftRotation = new Vector3(0,180,0);
+        public bool IsDragging => _isDragging;
+
+        // Recommended: flip sprite instead of rotating whole object (safer for 2D + colliders)
+        [Header("Visuals")]
+        [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private Animator frogAnimator; // <-- your frog idle/jump animator
+        public Animator legendaryAnim;                  // <-- your existing legendary trigger animator (keep)
+
+        [Header("Ground Check")]
+        [SerializeField] private Transform groundCheck;
+        [SerializeField] private float groundCheckRadius = 0.12f;
+        [SerializeField] private LayerMask groundLayer;
+
+        public Vector3 facingRightRotation = new Vector3(0, 0, 0);
+        public Vector3 facingLeftRotation = new Vector3(0, 180, 0);
+
         private TongueMechanicsScript _tongueMechanicsScript;
+
         public float maxHeightReached = 0f;
         public float jumpUpForce = 10f;
         public float jumpForce = 1f;
-        public bool IsDragging => _isDragging;
+
         private float _deltaX, _deltaY;
         private bool _moveAllowed = false;
         private float _tongueLength = 0;
         private Vector2 _initialTouchPos;
-        private Vector2 _currentTouchPos; 
+        private Vector2 _currentTouchPos;
+
         public float maxLaunchForce = 100f;
         public float defaultLaunchSpeed = 5f;
+
         private bool _isPlayerTouched = false;
         private bool consuming = false;
-        public Animator legendaryAnim;
+
         private AudioManager _audioManager;
 
-        // Start is called before the first frame update
+        // Animator parameter hashes (faster + typo-proof)
+        private static readonly int IsGroundedHash = Animator.StringToHash("isGrounded");
+        private static readonly int YVelocityHash   = Animator.StringToHash("yVelocity");
+        private static readonly int IsDraggingHash  = Animator.StringToHash("isDragging");
+        private static readonly int LegendaryStartHash = Animator.StringToHash("Start");
+
+        void Reset()
+        {
+            _rigidbody2D = GetComponent<Rigidbody2D>();
+            _tongueMechanicsScript = GetComponent<TongueMechanicsScript>();
+
+            if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            if (frogAnimator == null) frogAnimator = GetComponentInChildren<Animator>();
+        }
+
         void Start()
         {
             _tongueMechanicsScript = GetComponent<TongueMechanicsScript>();
             _tongueSpringJoint2D = frogTongue.GetComponent<SpringJoint2D>();
             _tongueSpringJoint2D.enabled = false;
+
             _rigidbody2D = GetComponent<Rigidbody2D>();
-            _rigidbody2D.freezeRotation = true; //adding this to prevent the frog's body from rotating while tongue is attached
+            _rigidbody2D.freezeRotation = true;
+
             _isDragging = false;
+
             _audioManager = GameObject.Find("AudioManagerObject").GetComponent<AudioManager>();
+
+            // Fallbacks if not assigned in Inspector
+            if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            if (frogAnimator == null) frogAnimator = GetComponentInChildren<Animator>();
         }
 
-        // Update is called once per frame
         void Update()
         {
-            if(_rigidbody2D.linearVelocity.y >= 20f){
-                legendaryAnim.SetTrigger("Start");
-            }
-            // CheckFacingDirection();
-
-            //determines if player is in the air i.e. not on a platform, falling or flying
-            _isInAir = _rigidbody2D.linearVelocity.y != 0;
-            //Stores maximum height reached for score
-            float playerPosY = _rigidbody2D.gameObject.transform.position.y;
-            if (playerPosY > 0)
+            // ---- LEGENDARY ANIM ----
+            if (_rigidbody2D.linearVelocity.y >= 20f && legendaryAnim != null)
             {
-                if (playerPosY > maxHeightReached)
-                {
-                    maxHeightReached = playerPosY;
-                }
+                legendaryAnim.SetTrigger(LegendaryStartHash);
             }
+
+            // ---- GROUND / AIR STATE ----
+            bool isGrounded = IsGrounded();
+            _isInAir = !isGrounded;
+
+            // ---- SCORE HEIGHT TRACKING ----
+            float playerPosY = _rigidbody2D.gameObject.transform.position.y;
+            if (playerPosY > 0 && playerPosY > maxHeightReached)
+                maxHeightReached = playerPosY;
 
             bool isPlayerFalling = _rigidbody2D.linearVelocity.y < 0;
-
-            if(isPlayerFalling && !_isPlayerTouched){
+            if (isPlayerFalling && !_isPlayerTouched)
                 EnableAllColliders();
-            }
-            
-            //Screen is touched
+
+            // ---- UPDATE FROG ANIMATOR ----
+            UpdateFrogAnimator(isGrounded);
+
+            // ---- OPTIONAL: FACE DIRECTION (SPRITE FLIP) ----
+            UpdateFacingDirection();
+
+            // ---- TOUCH INPUT ----
             if (Input.touchCount > 0)
             {
                 Touch touch = Input.GetTouch(0);
@@ -77,20 +118,26 @@ namespace _Scripts.Game.InputControl
                 Vector3 touchPos = Camera.main.ScreenToWorldPoint(touch.position);
                 touchPos.z = 0;
 
-                if(_tongueSpringJoint2D.enabled){
+                if (_tongueSpringJoint2D.enabled)
+                {
                     gameObject.layer = LayerMask.NameToLayer("WhileConnected");
-                    _tongueSpringJoint2D.gameObject.layer = LayerMask.NameToLayer("WhileConnected");   
-                } else {
+                    _tongueSpringJoint2D.gameObject.layer = LayerMask.NameToLayer("WhileConnected");
+                }
+                else
+                {
                     gameObject.layer = LayerMask.NameToLayer("Frog");
-                    _tongueSpringJoint2D.gameObject.layer = LayerMask.NameToLayer("Default");   
+                    _tongueSpringJoint2D.gameObject.layer = LayerMask.NameToLayer("Default");
                 }
 
                 _isPlayerTouched = GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos);
-                
-                switch(touch.phase){
+
+                switch (touch.phase)
+                {
                     case TouchPhase.Began:
-                        if(_tongueSpringJoint2D.enabled){
-                            if(_isPlayerTouched){
+                        if (_tongueSpringJoint2D.enabled)
+                        {
+                            if (_isPlayerTouched)
+                            {
                                 _audioManager.PlaySource(4);
                                 _initialTouchPos = touchPos;
                                 _deltaX = touchPos.x - transform.position.x;
@@ -98,110 +145,121 @@ namespace _Scripts.Game.InputControl
 
                                 _moveAllowed = true;
 
-                                // _rigidbody2D.freezeRotation = true;
                                 _rigidbody2D.linearVelocity = new Vector2(0, 0);
                                 _rigidbody2D.gravityScale = 0;
                                 _tongueSpringJoint2D.autoConfigureDistance = true;
+
                                 DisableAllColliders();
                             }
-                        } else {
-                            if(!_isInAir)
+                        }
+                        else
+                        {
+                            // Only jump if grounded (prevents double-jump from small velocity jitter)
+                            if (isGrounded)
                             {
                                 Ray ray = Camera.main.ScreenPointToRay(touch.position);
                                 RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
-                                if(hit.collider != null && hit.collider.CompareTag("Consumable"))
-                                {
-                                    consuming = true;
-                                } else {
-                                    consuming = false;
-                                }
 
-                                if(!consuming)
-                                {
+                                if (hit.collider != null && hit.collider.CompareTag("Consumable"))
+                                    consuming = true;
+                                else
+                                    consuming = false;
+
+                                if (!consuming)
                                     Jump(touchPos);
-                                }
                             }
                         }
-                    break;
+                        break;
+
                     case TouchPhase.Moved:
                     case TouchPhase.Stationary:
-                        if(_isPlayerTouched && _moveAllowed){
+                        if (_isPlayerTouched && _moveAllowed)
+                        {
                             _isDragging = true;
                             transform.position = touchPos;
                         }
-                    break;
+                        break;
+
                     case TouchPhase.Ended:
                         _audioManager.StopSource(4);
+
                         _isDragging = false;
                         _moveAllowed = false;
+
                         _rigidbody2D.gravityScale = 2;
                         _tongueSpringJoint2D.autoConfigureDistance = false;
                         _tongueSpringJoint2D.distance = .5f;
-                        if(_tongueSpringJoint2D.enabled && _isPlayerTouched){
+
+                        if (_tongueSpringJoint2D.enabled && _isPlayerTouched)
+                        {
                             _currentTouchPos = touchPos;
                             _tongueLength = Vector2.Distance(gameObject.transform.position, _tongueSpringJoint2D.anchor);
                             LaunchFrog();
                             _isPlayerTouched = false;
                         }
-                    break;
+                        break;
                 }
             }
         }
 
-        private void CheckFacingDirection()
+        private bool IsGrounded()
         {
-            if (!_tongueMechanicsScript.AttachedToHook())
-            {
-                var xVel = _rigidbody2D.linearVelocity.x;
-                if (xVel > 0)
-                {
-                    transform.rotation = Quaternion.Euler(facingRightRotation);
-                }
-                else if (xVel < 0)
-                {
-                    transform.rotation = Quaternion.Euler(facingLeftRotation);
-                }
-            }
-            else
+            if (groundCheck == null)
+                return Mathf.Abs(_rigidbody2D.linearVelocity.y) < 0.01f; // fallback if you forgot to assign
+
+            return Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        }
+
+        private void UpdateFrogAnimator(bool isGrounded)
+        {
+            if (frogAnimator == null) return;
+
+            frogAnimator.SetBool(IsGroundedHash, isGrounded);
+            frogAnimator.SetFloat(YVelocityHash, _rigidbody2D.linearVelocity.y);
+            frogAnimator.SetBool(IsDraggingHash, _isDragging);
+        }
+
+        private void UpdateFacingDirection()
+        {
+            if (spriteRenderer == null) return;
+
+            // If attached to hook, face toward the hook point; otherwise face direction of motion
+            if (_tongueMechanicsScript != null && _tongueMechanicsScript.AttachedToHook())
             {
                 var attachedTonguePoint = _tongueMechanicsScript.GetAttachedTonguePoint();
-                if (transform.position.x > attachedTonguePoint.x)
-                {
-                    transform.rotation = Quaternion.Euler(facingLeftRotation);
-                }
-                else
-                {
-                    transform.rotation = Quaternion.Euler(facingRightRotation);
-                }
+                spriteRenderer.flipX = transform.position.x > attachedTonguePoint.x;
+                return;
             }
+
+            var xVel = _rigidbody2D.linearVelocity.x;
+            if (xVel > 0.05f) spriteRenderer.flipX = false;
+            else if (xVel < -0.05f) spriteRenderer.flipX = true;
         }
 
         private void Jump(Vector3 touchPosition)
         {
             touchPosition.z = 0;
             _audioManager.PlaySource(2);
+
             float angle = Vector3.Angle(touchPosition - gameObject.transform.position, Vector3.up);
 
             if (angle < 25)
             {
                 _rigidbody2D.AddForce(Vector2.up * jumpUpForce, ForceMode2D.Impulse);
-            } 
-            else 
+            }
+            else
             {
                 if (touchPosition.x > transform.position.x)
-                {
                     _rigidbody2D.AddForce(new Vector2(jumpForce, jumpUpForce), ForceMode2D.Impulse);
-                }
                 else if (touchPosition.x < transform.position.x)
-                {
                     _rigidbody2D.AddForce(new Vector2(-jumpForce, jumpUpForce), ForceMode2D.Impulse);
-                }
             }
         }
 
         private void LaunchFrog()
         {
             _isDragging = false;
+
             Vector2 direction = (_initialTouchPos - _currentTouchPos).normalized;
             direction = new Vector2(direction.x, Mathf.Abs(direction.y));
 
@@ -213,23 +271,33 @@ namespace _Scripts.Game.InputControl
             _tongueSpringJoint2D.gameObject.layer = LayerMask.NameToLayer("Default");
         }
 
-        private void DisableAllColliders(){
+        private void DisableAllColliders()
+        {
             Collider2D[] allColliders = FindObjectsOfType<Collider2D>();
 
             foreach (Collider2D collider in allColliders)
             {
-                if(collider.gameObject != gameObject && (collider.gameObject.layer == LayerMask.NameToLayer("Hooks") || collider.gameObject.layer == LayerMask.NameToLayer("Platforms")))
+                if (collider.gameObject != gameObject &&
+                    (collider.gameObject.layer == LayerMask.NameToLayer("Hooks") ||
+                     collider.gameObject.layer == LayerMask.NameToLayer("Platforms")))
+                {
                     collider.enabled = false;
+                }
             }
         }
 
-        private void EnableAllColliders(){
+        private void EnableAllColliders()
+        {
             Collider2D[] allColliders = FindObjectsOfType<Collider2D>();
-
             foreach (Collider2D collider in allColliders)
-            {
                 collider.enabled = true;
-            }
+        }
+
+        // Optional: visualize ground check in Scene view
+        private void OnDrawGizmosSelected()
+        {
+            if (groundCheck == null) return;
+            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
     }
 }
