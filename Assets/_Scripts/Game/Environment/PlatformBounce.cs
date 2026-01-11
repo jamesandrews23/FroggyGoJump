@@ -5,25 +5,25 @@ namespace _Scripts.Game.Environment
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Collider2D))]
-    public class CloudBounce : MonoBehaviour
+    public class PlatformBounce : MonoBehaviour
     {
+        [Header("Bounce (physics)")]
+        [SerializeField] private float bounceUpForce = 12f;
+        [SerializeField] private float bounceSideForce = 0f; // optional, set to 0 for none
+
         [Header("Bounce (visual)")]
         public float squashAmount = 0.85f;
         public float stretchAmount = 1.05f;
         public float bounceHoldTime = 0.08f;
 
         [Header("Landing detection (Effector-safe)")]
-        [Tooltip("How close the contact point must be to the top of the cloud to count as a landing.")]
         public float topPointTolerance = 0.05f;
-
-        [Tooltip("Player must be falling or near-zero vertical speed to count as landing.")]
         public float maxUpwardVelocityToCount = 0.05f;
 
         private Vector3 _originalScale;
         private bool _isBouncing;
 
         private Transform _playerRootOnCloud;
-
         private Collider2D _cloudCollider;
 
         void Awake()
@@ -34,7 +34,6 @@ namespace _Scripts.Game.Environment
 
         void OnEnable()
         {
-            // Reset state for pooling / re-enable scenarios
             _isBouncing = false;
             _playerRootOnCloud = null;
 
@@ -58,8 +57,26 @@ namespace _Scripts.Game.Environment
 
             _playerRootOnCloud = playerRoot;
 
+            // ---- PHYSICS BOUNCE (calls your Controls script) ----
+            var controls = playerRoot.GetComponent<_Scripts.Game.InputControl.Controls>();
+            if (controls != null)
+            {
+                controls.PlatformBounce(
+                    bounceUpForce,
+                    bounceSideForce,
+                    transform.position.x
+                );
+            }
+            else if (playerRb != null)
+            {
+                // Fallback if Controls isn't found
+                playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, 0f);
+                playerRb.AddForce(Vector2.up * bounceUpForce, ForceMode2D.Impulse);
+            }
+
+            // ---- VISUAL SQUISH ----
             if (!_isBouncing)
-                StartCoroutine(Bounce());
+                StartCoroutine(BounceVisual());
         }
 
         void OnCollisionExit2D(Collision2D collision)
@@ -77,7 +94,6 @@ namespace _Scripts.Game.Environment
             if (playerRb != null && playerRb.linearVelocity.y > maxUpwardVelocityToCount)
                 return false;
 
-            // Contact point vs top of cloud bounds (stable with EdgeCollider + PlatformEffector2D)
             float cloudTopY = _cloudCollider.bounds.max.y;
 
             for (int i = 0; i < collision.contactCount; i++)
@@ -90,7 +106,7 @@ namespace _Scripts.Game.Environment
             return false;
         }
 
-        private IEnumerator Bounce()
+        private IEnumerator BounceVisual()
         {
             _isBouncing = true;
 

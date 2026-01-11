@@ -55,6 +55,14 @@ namespace _Scripts.Game.InputControl
         private static readonly int YVelocityHash   = Animator.StringToHash("yVelocity");
         private static readonly int IsDraggingHash  = Animator.StringToHash("isDragging");
         private static readonly int LegendaryStartHash = Animator.StringToHash("Start");
+        
+        [Header("Bounce Air Control (only after platform bounce)")]
+        [SerializeField] private float bounceAirControlDuration = 0.35f;   // how long steering is allowed after a bounce
+        [SerializeField] private float bounceAirControlAccel = 40f;        // how fast x velocity changes toward target
+        [SerializeField] private float bounceAirControlMaxSpeed = 6f;      // cap horizontal speed during bounce control
+
+        private float _bounceAirControlTimer = 0f;
+
 
         void Reset()
         {
@@ -94,6 +102,10 @@ namespace _Scripts.Game.InputControl
             // ---- GROUND / AIR STATE ----
             bool isGrounded = IsGrounded();
             _isInAir = !isGrounded;
+            
+            if (_bounceAirControlTimer > 0f)
+                _bounceAirControlTimer -= Time.deltaTime;
+
 
             // ---- SCORE HEIGHT TRACKING ----
             float playerPosY = _rigidbody2D.gameObject.transform.position.y;
@@ -173,13 +185,16 @@ namespace _Scripts.Game.InputControl
 
                     case TouchPhase.Moved:
                     case TouchPhase.Stationary:
+                        // If you're not in tongue-drag mode, allow bounce-only air steering
+                        if (!_moveAllowed) 
+                            ApplyBounceAirControl(touchPos);
+                        
                         if (_isPlayerTouched && _moveAllowed)
                         {
                             _isDragging = true;
                             transform.position = touchPos;
                         }
                         break;
-
                     case TouchPhase.Ended:
                         _audioManager.StopSource(4);
 
@@ -255,6 +270,28 @@ namespace _Scripts.Game.InputControl
                     _rigidbody2D.AddForce(new Vector2(-jumpForce, jumpUpForce), ForceMode2D.Impulse);
             }
         }
+        
+        public void PlatformBounce(float bounceUpForce, float bounceSideForce = 0f, float fromX = 0f)
+        {
+            // Arm bounce-only air control window
+            _bounceAirControlTimer = bounceAirControlDuration;
+
+            // Consistent bounce: clear vertical speed before applying bounce
+            _rigidbody2D.linearVelocity = new Vector2(_rigidbody2D.linearVelocity.x, 0f);
+
+            Vector2 force = Vector2.up * bounceUpForce;
+
+            // Optional sideways push away from platform center
+            if (Mathf.Abs(bounceSideForce) > 0.001f)
+            {
+                float dir = Mathf.Sign(transform.position.x - fromX);
+                if (dir == 0f) dir = 1f;
+                force += Vector2.right * (dir * bounceSideForce);
+            }
+
+            _rigidbody2D.AddForce(force, ForceMode2D.Impulse);
+        }
+
 
         private void LaunchFrog()
         {
@@ -299,5 +336,28 @@ namespace _Scripts.Game.InputControl
             if (groundCheck == null) return;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
+        
+        private void ApplyBounceAirControl(Vector3 touchWorldPos)
+        {
+            if (_bounceAirControlTimer <= 0f) return;
+            if (_tongueSpringJoint2D != null && _tongueSpringJoint2D.enabled) return; // don't fight tongue system
+
+            // Only left/right steering (no vertical changes)
+            float dir = 0f;
+            float dx = touchWorldPos.x - transform.position.x;
+
+            if (dx > 0.15f) dir = 1f;
+            else if (dx < -0.15f) dir = -1f;
+
+            if (dir == 0f) return;
+
+            float targetX = dir * bounceAirControlMaxSpeed;
+
+            _rigidbody2D.linearVelocity = new Vector2(
+                Mathf.MoveTowards(_rigidbody2D.linearVelocity.x, targetX, bounceAirControlAccel * Time.deltaTime),
+                _rigidbody2D.linearVelocity.y
+            );
+        }
+
     }
 }

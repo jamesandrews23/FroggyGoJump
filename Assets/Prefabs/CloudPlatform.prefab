@@ -168,10 +168,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 224170d51f54b0145afa9bfc2b57ce45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  bounceUpForce: 12
+  bounceSideForce: 0
   squashAmount: 0.85
   stretchAmount: 1.05
   bounceHoldTime: 0.08
-  bouncesBeforeFade: 2
-  fadeDuration: 0.5
   topPointTolerance: 0.1
   maxUpwardVelocityToCount: 0.1
