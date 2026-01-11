@@ -6383,7 +6383,7 @@ Transform:
   m_GameObject: {fileID: 552371921}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.020000003, y: -1.05, z: 0}
+  m_LocalPosition: {x: 0.2, y: -1.85, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6509,12 +6509,12 @@ SpringJoint2D:
   m_Enabled: 0
   serializedVersion: 4
   m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 0}
+  m_ConnectedRigidBody: {fileID: 1489601334}
   m_BreakForce: 200
   m_BreakTorque: Infinity
-  m_BreakAction: 3
+  m_BreakAction: 2
   m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: -0.03, y: 0}
+  m_Anchor: {x: -0.030000001, y: -0.26360393}
   m_ConnectedAnchor: {x: 0.03, y: 0.4}
   m_AutoConfigureDistance: 0
   m_Distance: 0.5
@@ -14337,6 +14337,11 @@ MonoBehaviour:
   wrapHorizontal: 1
   wrapVertical: 0
   padding: 0.02
+--- !u!50 &1489601334 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 3654649731102101683, guid: 98a6c86fbaf44614a8196330c200969a, type: 3}
+  m_PrefabInstance: {fileID: 1524007067}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1498293001
 GameObject:
   m_ObjectHideFlags: 0

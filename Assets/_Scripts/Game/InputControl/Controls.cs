@@ -113,8 +113,8 @@ namespace _Scripts.Game.InputControl
                 maxHeightReached = playerPosY;
 
             bool isPlayerFalling = _rigidbody2D.linearVelocity.y < 0;
-            if (isPlayerFalling && !_isPlayerTouched)
-                EnableAllColliders();
+            // if (isPlayerFalling && !_isPlayerTouched)
+                // EnableAllColliders();
 
             // ---- UPDATE FROG ANIMATOR ----
             UpdateFrogAnimator(isGrounded);
@@ -161,7 +161,7 @@ namespace _Scripts.Game.InputControl
                                 _rigidbody2D.gravityScale = 0;
                                 _tongueSpringJoint2D.autoConfigureDistance = true;
 
-                                DisableAllColliders();
+                                // DisableAllColliders();
                             }
                         }
                         else
@@ -310,24 +310,24 @@ namespace _Scripts.Game.InputControl
 
         private void DisableAllColliders()
         {
-            Collider2D[] allColliders = FindObjectsOfType<Collider2D>();
-
-            foreach (Collider2D collider in allColliders)
-            {
-                if (collider.gameObject != gameObject &&
-                    (collider.gameObject.layer == LayerMask.NameToLayer("Hooks") ||
-                     collider.gameObject.layer == LayerMask.NameToLayer("Platforms")))
-                {
-                    collider.enabled = false;
-                }
-            }
+            // Collider2D[] allColliders = FindObjectsOfType<Collider2D>();
+            //
+            // foreach (Collider2D collider in allColliders)
+            // {
+            //     if (collider.gameObject != gameObject &&
+            //         (collider.gameObject.layer == LayerMask.NameToLayer("Hooks") ||
+            //          collider.gameObject.layer == LayerMask.NameToLayer("Platforms")))
+            //     {
+            //         collider.enabled = false;
+            //     }
+            // }
         }
 
         private void EnableAllColliders()
         {
-            Collider2D[] allColliders = FindObjectsOfType<Collider2D>();
-            foreach (Collider2D collider in allColliders)
-                collider.enabled = true;
+            // Collider2D[] allColliders = FindObjectsOfType<Collider2D>();
+            // foreach (Collider2D collider in allColliders)
+            //     collider.enabled = true;
         }
 
         // Optional: visualize ground check in Scene view

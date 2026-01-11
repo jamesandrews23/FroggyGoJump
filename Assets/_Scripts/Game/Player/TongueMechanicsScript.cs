@@ -6,31 +6,31 @@ namespace _Scripts.Game.Player
     public class TongueMechanicsScript : MonoBehaviour
     {
         public GameObject tongue;
-        // Start is called before the first frame update
-        private SpringJoint2D _tongueJoint;
 
+        private SpringJoint2D _tongueJoint;
         private Vector2 _connectedTonguePoint;
 
         public float tongueAnchorPointOffset = 1;
-
         public float bottomOfScreenThreshold = 2;
-
         public float distanceToHookThreshold = 5;
 
         public Camera mainCamera;
-        
-        private Hook connectedHook;
+
+        // Replaces: private Hook connectedHook;
+        private ITongueAttachable connectedAttachable;
+
         private Consumable food;
         private LineRenderer line;
 
         private bool touchedConsumable = false;
-
         private Collider2D tongueCollision;
 
         public float tongueSpeed = 5f;
+        private Rigidbody2D playerRigidbody;
 
         void Start()
         {
+            playerRigidbody = GetComponent<Rigidbody2D>();
             _tongueJoint = tongue.GetComponent<SpringJoint2D>();
             line = tongue.GetComponent<LineRenderer>();
             mainCamera = Camera.main;
@@ -39,31 +39,44 @@ namespace _Scripts.Game.Player
             line.endWidth = 0.1f;
         }
 
-        // Update is called once per frame
         void Update()
         {
             var rayCast = GetTouchHit();
-            if (rayCast.collider != null && rayCast.collider.gameObject.CompareTag("Hook"))
+            if (rayCast.collider == null) return;
+
+            // NEW: anything with ITongueAttachable can be attached to
+            var hitAttachable = rayCast.collider.GetComponent<TongueAttachable>();
+            if (hitAttachable != null)
             {
-                var hitHook = rayCast.collider.GetComponent<Hook>();
-                if (connectedHook != null && connectedHook == hitHook) //if touched hook is connected to tongue already, detach tongue from touched hook
+                // If touched same object you're already attached to -> detach
+                if (connectedAttachable != null && ReferenceEquals(connectedAttachable, hitAttachable))
                 {
                     _tongueJoint.enabled = false;
-                    connectedHook = null;
+                    connectedAttachable = null;
                 }
-                else if (IsHookInRange(rayCast)) //otherwise, check if touched hook is in range. If so, attach tongue to hook
+                else if (IsAttachableInRange(rayCast)) // reuse your existing range logic
                 {
-                    connectedHook = hitHook;
-                    _connectedTonguePoint = rayCast.point;
+                    connectedAttachable = hitAttachable;
+
+                    // Attach point can be hit point, transform, or a custom anchor (via TongueAttachable component)
+                    _connectedTonguePoint = hitAttachable.GetAttachPoint(rayCast.point);
+
                     _tongueJoint.enabled = true;
+
+                    // Your existing vertical offset stays (you can move this into TongueAttachable if you prefer)
                     _tongueJoint.anchor = _connectedTonguePoint + new Vector2(0, tongueAnchorPointOffset);
                 }
-            } 
+
+                return; // don't fall through to consumable handling on the same tap
+            }
+
+            // Your existing consumable logic stays the same (LateUpdate handles drawing/pulling)
         }
 
         void LateUpdate()
         {
             var rayCast = GetTouchHit();
+
             if (_tongueJoint.enabled)
             {
                 Vector3 pos1 = _tongueJoint.connectedBody.transform.position;
@@ -71,20 +84,31 @@ namespace _Scripts.Game.Player
                 line.enabled = true;
                 line.SetPosition(0, pos1);
                 line.SetPosition(1, pos2 + new Vector3(0, -1, 0));
-            } else if (rayCast.collider != null && rayCast.collider.gameObject.CompareTag("Consumable")) {
+            }
+            else if (rayCast.collider != null && rayCast.collider.gameObject.CompareTag("Consumable"))
+            {
                 float distance = Vector2.Distance(transform.position, rayCast.collider.transform.position);
-                if(distance <= distanceToHookThreshold){
+                if (distance <= distanceToHookThreshold)
+                {
                     touchedConsumable = true;
                     tongueCollision = rayCast.collider;
                     line.enabled = true;
                     DrawTongueValues(transform.position, tongueCollision.transform.position);
                 }
-            } else {
+            }
+            else
+            {
                 line.enabled = false;
             }
 
-            if(touchedConsumable && tongueCollision != null){
-                tongueCollision.transform.position = Vector2.MoveTowards(tongueCollision.transform.position, transform.position, tongueSpeed * Time.deltaTime);
+            if (touchedConsumable && tongueCollision != null)
+            {
+                tongueCollision.transform.position = Vector2.MoveTowards(
+                    tongueCollision.transform.position,
+                    transform.position,
+                    tongueSpeed * Time.deltaTime
+                );
+
                 line.enabled = true;
                 DrawTongueValues(transform.position, tongueCollision.transform.position);
             }
@@ -97,52 +121,61 @@ namespace _Scripts.Game.Player
 
         public bool AttachedToHook()
         {
-            return connectedHook != null && _tongueJoint.enabled;
+            // Now means "attached to something"
+            return connectedAttachable != null && _tongueJoint.enabled;
         }
 
-        public bool CompareConnectedHook(Hook toCompare)
-        {
-            return toCompare == connectedHook;
-        }
-
-        private bool IsHookInRange(RaycastHit2D hit)
+        private bool IsAttachableInRange(RaycastHit2D hit)
         {
             float cameraBottomY = mainCamera.ViewportToWorldPoint(new Vector3(0, 0, mainCamera.nearClipPlane)).y;
-            var hookPos = hit.collider.gameObject.transform.position.y;
+            var targetPosY = hit.collider.transform.position.y;
+
             Vector2 posA = new Vector2(0, cameraBottomY);
-            Vector2 posB = new Vector2(0, hookPos);
-            float distanceBetweenHookAndScreen = Vector2.Distance(posA, posB);
+            Vector2 posB = new Vector2(0, targetPosY);
 
-            Rigidbody2D frog = tongue.GetComponent<SpringJoint2D>().connectedBody;
-            Vector3 frogPos = frog.transform.position;
+            float distanceBetweenTargetAndScreen = Vector2.Distance(posA, posB);
 
-            float distanceBetweenHookAndFrog = Vector2.Distance(frogPos, posB);
-            
-            return distanceBetweenHookAndScreen >= bottomOfScreenThreshold && distanceBetweenHookAndFrog <= distanceToHookThreshold;
+            Vector3 frogPos = playerRigidbody.transform.position;
+
+            float distanceBetweenTargetAndFrog = Vector2.Distance(frogPos, posB);
+
+            return distanceBetweenTargetAndScreen >= bottomOfScreenThreshold &&
+                   distanceBetweenTargetAndFrog <= distanceToHookThreshold;
         }
+
+        [SerializeField] private LayerMask tongueAttachMask = ~0; // set in Inspector if you want
 
         private RaycastHit2D GetTouchHit()
         {
+            // Touch on device
             if (Input.touchCount > 0)
             {
                 var touch = Input.GetTouch(0);
+                if (touch.phase != TouchPhase.Began) return new RaycastHit2D();
 
-                if (touch.phase == TouchPhase.Began)
-                {
-                    Vector2 touchPosition = touch.position;
-                    Ray ray = mainCamera.ScreenPointToRay(touchPosition);
-                    RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
+                Ray ray = mainCamera.ScreenPointToRay(touch.position);
 
-                    return hit;
-                }
+                // IMPORTANT: Use GetRayIntersection for 2D colliders (EdgeCollider works!)
+                return Physics2D.GetRayIntersection(ray, Mathf.Infinity, tongueAttachMask);
             }
+
+#if UNITY_EDITOR || UNITY_STANDALONE
+            // Mouse in editor (so you can test without building)
+            if (Input.GetMouseButtonDown(0))
+            {
+                Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+                return Physics2D.GetRayIntersection(ray, Mathf.Infinity, tongueAttachMask);
+            }
+#endif
 
             return new RaycastHit2D();
         }
 
-        private void DrawTongueValues(Vector3 pos1, Vector3 pos2){
+
+        private void DrawTongueValues(Vector3 pos1, Vector3 pos2)
+        {
             line.SetPosition(0, pos1);
-            line.SetPosition(1, pos2);    
+            line.SetPosition(1, pos2);
         }
     }
 }

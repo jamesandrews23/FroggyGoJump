@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags:
   - Platform
   - Hook
@@ -26,7 +26,7 @@ TagManager:
   - Level
   - Wheel
   - Clouds
-  - 
+  - TongueTarget
   - 
   - 
   - 
@@ -60,3 +60,5 @@ TagManager:
   - name: player
     uniqueID: 1810021897
     locked: 0
+  m_RenderingLayers:
+  - Default
